@@ -25,7 +25,7 @@ enum AdmissionStatus: string implements HasColor, HasLabel
         return match ($this) {
             self::Active => 'success',
             self::Promoted => 'info',
-            self::Left => 'gray',
+            self::Left => 'gray' ,
         };
     }
 }
