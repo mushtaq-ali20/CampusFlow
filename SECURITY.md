@@ -4,16 +4,13 @@ CampusFlow stores personal data about students, their contacts, enrolments and p
 
 ## Supported versions
 
-Security fixes are applied to the `main` branch (the Filament version). The legacy Backpack version in the `pro` branch is no longer maintained.
+Security fixes are applied to the `main` branch.
 
 ## Reporting a vulnerability
 
 **Please do not open a public issue for security problems.**
 
-Report vulnerabilities privately, using either of these channels:
-
-- [Report a vulnerability](https://github.com/academico-sis/academico/security/advisories/new) through GitHub's private vulnerability reporting
-- Email academico@thomasdebay.com
+Report vulnerabilities privately through GitHub's private vulnerability reporting: [Report a vulnerability](https://github.com/mushtaq-ali20/CampusFlow/security/advisories/new).
 
 Please include the affected version or commit, the steps to reproduce, and the impact you expect.
 

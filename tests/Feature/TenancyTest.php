@@ -112,12 +112,12 @@ class TenancyTest extends TestCase
         $tenant->domains()->create(['domain' => 'second.localhost', 'is_primary' => true]);
 
         $this->assertSame('http://second.localhost:8090', $tenant->url('http://localhost:8090'));
-        $this->assertSame('https://second.localhost', $tenant->url('https://academico.example'));
+        $this->assertSame('https://second.localhost', $tenant->url('https://campusflow.example'));
     }
 
     public function test_url_and_files_follow_the_tenant(): void
     {
-        config(['app.url' => 'https://academico.example', 'multitenancy.landlord_database' => 'landlord']);
+        config(['app.url' => 'https://campusflow.example', 'multitenancy.landlord_database' => 'landlord']);
         $tenant = Tenant::create(['name' => 'Second school', 'database' => 'second', 'storage_folder' => 'framework/testing/tenants/2']);
         $this->beforeApplicationDestroyed(fn () => File::deleteDirectory(storage_path('framework/testing/tenants')));
         $tenant->domains()->create(['domain' => 'www.second.example.org']);
@@ -137,7 +137,7 @@ class TenancyTest extends TestCase
         $urlTask->forgetCurrent();
         $filesystemsTask->forgetCurrent();
 
-        $this->assertSame('https://academico.example/admin', url('/admin'));
+        $this->assertSame('https://campusflow.example/admin', url('/admin'));
         $this->assertSame(storage_path('app/private/photo.jpg'), Storage::disk('local')->path('photo.jpg'));
     }
 
@@ -194,7 +194,7 @@ class TenancyTest extends TestCase
         config([
             'multitenancy.landlord_database' => 'landlord',
             'multitenancy.landlord_database_connection_name' => 'landlord_url_test',
-            'database.connections.sqlite.url' => 'mysql://user:secret@db/academico',
+            'database.connections.sqlite.url' => 'mysql://user:secret@db/campusflow',
         ]);
 
         $this->expectExceptionMessage('DB_URL cannot be used with LANDLORD_DB_DATABASE');

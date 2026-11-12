@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "academico-sis/academico",
+    "name": "mushtaq-ali20/campusflow",
     "type": "project",
-    "description": "A student information system built for simplicity.",
+    "description": "A school management system for Pakistani schools.",
     "license": "MIT",
     "require": {
         "php": "^8.5",

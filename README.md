@@ -1,59 +1,9 @@
 # About this project
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-CampusFlow is an open-source, Laravel-based school management platform. Its main features include course management, enrolments management, resources scheduling, reports and stats. It is primarily targeted at small and medium-sized institutions who need a simple and affordable solution to manage their school and courses.
-
-# New 2026 version (Filament-based)
-The first versions of this project were built with the awesome Backpack for Laravel framework. However, the application was entirely rewritten with Laravel Filament, which is the only supported version. The Filament version started from the same database structure, but it now evolves independently: it is no longer a drop-in replacement for the Backpack version, and moving an existing Backpack installation to it would need a dedicated migration.
+CampusFlow is a Laravel and Filament school management system for Pakistani schools. It covers admissions and enquiries, students, classes and sections, the timetable, attendance, exams and result cards, fees collected at the counter, complaints, parent teacher meetings, documents, discipline, employees, leave, payroll, recruitment, performance evaluation and account payable. Several branches are run from one installation.
 
 # Disclaimer
-This software is provided "as-is", without any warranties. Please use with caution, and report bugs if you encounter them. Contributions are welcome to make CampusFlow a better, more usable software.
-
-# Contributors welcome! ✨
-If you are using this applications and want to make some improvements for your own needs, or just willing to contribute to an open-source project, feel free to open an issue and make some suggestions. Contributions might go from writing code, to extending the documentation or the translations, or simply suggesting new features, UX improvements, and so on.
-
-Thanks goes to these wonderful people for past or current version of this application ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thdebay"><img src="https://avatars3.githubusercontent.com/u/1422621?v=4?s=100" width="100px;" alt="Thomas Debay"/><br /><sub><b>Thomas Debay</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=thdebay" title="Code">💻</a> <a href="https://github.com/academico-sis/academico/commits?author=thdebay" title="Documentation">📖</a> <a href="#ideas-thdebay" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-thdebay" title="Maintenance">🚧</a> <a href="https://github.com/academico-sis/academico/commits?author=thdebay" title="Tests">⚠️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marcmarina"><img src="https://avatars3.githubusercontent.com/u/38327883?v=4?s=100" width="100px;" alt="Marc Marina Miravitlles"/><br /><sub><b>Marc Marina Miravitlles</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=marcmarina" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/damienBAUDET"><img src="https://avatars1.githubusercontent.com/u/51827692?v=4?s=100" width="100px;" alt="Damien Baudet"/><br /><sub><b>Damien Baudet</b></sub></a><br /><a href="#maintenance-damienBAUDET" title="Maintenance">🚧</a> <a href="https://github.com/academico-sis/academico/commits?author=damienBAUDET" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://techarewa.com"><img src="https://avatars3.githubusercontent.com/u/7858376?v=4?s=100" width="100px;" alt="Mubarak M Aminu"/><br /><sub><b>Mubarak M Aminu</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=mubarak23" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Aybee5"><img src="https://avatars1.githubusercontent.com/u/42099896?v=4?s=100" width="100px;" alt="Ibrahim Abdullahi Aliyu"/><br /><sub><b>Ibrahim Abdullahi Aliyu</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=Aybee5" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/AleksandarMitevski"><img src="https://avatars3.githubusercontent.com/u/59975218?v=4?s=100" width="100px;" alt="AleksandarMitevski"/><br /><sub><b>AleksandarMitevski</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=AleksandarMitevski" title="Tests">⚠️</a> <a href="https://github.com/academico-sis/academico/commits?author=AleksandarMitevski" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/TanoRojas"><img src="https://avatars0.githubusercontent.com/u/7780437?v=4?s=100" width="100px;" alt="Tano Rojas"/><br /><sub><b>Tano Rojas</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=TanoRojas" title="Tests">⚠️</a> <a href="https://github.com/academico-sis/academico/commits?author=TanoRojas" title="Code">💻</a></td>
-    </tr>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://cirkovic.me"><img src="https://avatars0.githubusercontent.com/u/32557332?v=4?s=100" width="100px;" alt="Nikola Cirkovic"/><br /><sub><b>Nikola Cirkovic</b></sub></a><br /><a href="https://github.com/academico-sis/academico/issues?q=author%3ACirkaN" title="Bug reports">🐛</a> <a href="#maintenance-CirkaN" title="Maintenance">🚧</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/quieneslatern"><img src="https://avatars.githubusercontent.com/u/57142715?v=4?s=100" width="100px;" alt="quieneslatern"/><br /><sub><b>quieneslatern</b></sub></a><br /><a href="#translation-quieneslatern" title="Translation">🌍</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://bit.ly/doode-website"><img src="https://avatars.githubusercontent.com/u/1921806?v=4?s=100" width="100px;" alt="Vitor Micillo"/><br /><sub><b>Vitor Micillo</b></sub></a><br /><a href="#maintenance-vitormicillo" title="Maintenance">🚧</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Dummdevka"><img src="https://avatars.githubusercontent.com/u/87282400?v=4?s=100" width="100px;" alt="Tatiana Goloviznina"/><br /><sub><b>Tatiana Goloviznina</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=Dummdevka" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rm-yakovenko"><img src="https://avatars.githubusercontent.com/u/2056667?v=4?s=100" width="100px;" alt="Rm Yakovenko"/><br /><sub><b>Rm Yakovenko</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=rm-yakovenko" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/MizouziE"><img src="https://avatars.githubusercontent.com/u/90829439?v=4?s=100" width="100px;" alt="Sam"/><br /><sub><b>Sam</b></sub></a><br /><a href="https://github.com/academico-sis/academico/commits?author=MizouziE" title="Code">💻</a> <a href="https://github.com/academico-sis/academico/commits?author=MizouziE" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/rafaelfariasbsb"><img src="https://avatars.githubusercontent.com/u/4338815?v=4?s=100" width="100px;" alt="Rafael Farias"/><br /><sub><b>Rafael Farias</b></sub></a><br /><a href="#translation-rafaelfariasbsb" title="Translation">🌍</a></td>
-    </tr>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/kta1kri"><img src="https://avatars.githubusercontent.com/u/77656895?v=4?s=100" width="100px;" alt="kta1kri"/><br /><sub><b>kta1kri</b></sub></a><br /><a href="#security-kta1kri" title="Security">🛡️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/tonghuaroot"><img src="https://avatars.githubusercontent.com/u/23011166?v=4?s=100" width="100px;" alt="tonghuaroot (童话)"/><br /><sub><b>tonghuaroot (童话)</b></sub></a><br /><a href="#security-tonghuaroot" title="Security">🛡️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/M4ru-0x03"><img src="https://avatars.githubusercontent.com/u/153677080?v=4?s=100" width="100px;" alt="Nathan Lima"/><br /><sub><b>Nathan Lima</b></sub></a><br /><a href="#security-M4ru-0x03" title="Security">🛡️</a></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
+This software is provided "as-is", without any warranties. Please use with caution, and report bugs if you encounter them.
 
 # Getting started
 
@@ -70,8 +20,8 @@ Nothing else is needed on your machine: PHP, Composer and Node run inside the co
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/academico-sis/academico.git
-cd academico
+git clone https://github.com/mushtaq-ali20/CampusFlow.git
+cd CampusFlow
 ```
 
 2. Start the containers and wait until the application is ready:
@@ -155,7 +105,11 @@ docker compose down -v       # Stop containers and delete the database and depen
 
 ## Production image
 
-`docker-compose.yml` is meant for development. A production image is built from the same `Dockerfile` and published on Docker Hub as [`academicosis/academico`](https://hub.docker.com/r/academicosis/academico).
+`docker-compose.yml` is meant for development. A production image is built from the same `Dockerfile`:
+
+```bash
+docker build -t campusflow:latest .
+```
 
 ## Serving several institutions
 
@@ -215,7 +169,7 @@ Redirect HTTP to HTTPS on the `web` entry point (`--entrypoints.web.http.redirec
 ```yaml
 services:
   campusflow:
-    image: academicosis/academico:latest
+    image: campusflow:latest
     # The server starts even when the migrations of one institution fail: the others stay online
     command: sh -c 'php artisan campusflow:migrate --force; php artisan optimize && frankenphp run --config /etc/caddy/Caddyfile'
     env_file: .env
@@ -225,14 +179,14 @@ services:
       - ./storage:/app/storage
 
   campusflow-scheduler:
-    image: academicosis/academico:latest
+    image: campusflow:latest
     command: sh -c 'while true; do php artisan schedule:run --no-interaction; sleep 60; done'
     env_file: .env
     volumes:
       - ./storage:/app/storage
 
   campusflow-worker:
-    image: academicosis/academico:latest
+    image: campusflow:latest
     command: php artisan queue:work --tries=3 --timeout=60
     env_file: .env
     volumes:
@@ -250,7 +204,7 @@ GRANT ALL PRIVILEGES ON `campusflow\_%`.* TO 'campusflow'@'%';
 
 # Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for how to set up a development environment and submit changes. Notable changes are listed in [CHANGELOG.md](CHANGELOG.md).
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to set up a development environment and submit changes.
 
 To report a security problem, follow the [security policy](SECURITY.md) instead of opening a public issue.
 

@@ -4,7 +4,7 @@ Thank you for your interest in CampusFlow! Contributions of any kind are welcome
 
 ## Reporting bugs and suggesting features
 
-- Search the [existing issues](https://github.com/academico-sis/academico/issues) first.
+- Search the [existing issues](https://github.com/mushtaq-ali20/CampusFlow/issues) first.
 - Open a new issue using the bug report or feature request form.
 - Security problems must **not** be reported in a public issue: see [SECURITY.md](SECURITY.md).
 
@@ -13,8 +13,8 @@ Thank you for your interest in CampusFlow! Contributions of any kind are welcome
 Docker is the only requirement. PHP, Composer and Node all run inside containers.
 
 ```bash
-git clone https://github.com/academico-sis/academico.git
-cd academico
+git clone https://github.com/mushtaq-ali20/CampusFlow.git
+cd CampusFlow
 docker compose up -d --wait
 ```
 
@@ -49,10 +49,6 @@ Every pull request runs the tests, the code style check and a production image b
 ## Translations
 
 Translation files live in `lang/`. To improve a translation or add a language, edit or add the corresponding files and open a pull request.
-
-## Recognition
-
-Contributors are listed in the README following the [all-contributors](https://github.com/all-contributors/all-contributors) specification.
 
 ## License
 
