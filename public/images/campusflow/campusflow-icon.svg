@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="256" height="256">
+  <defs><clipPath id="cf-tile-s"><rect width="64" height="64" rx="16"/></clipPath></defs>
+  <g>
+    <rect width="64" height="64" rx="16" fill="#F59E0B"/>
+    <g clip-path="url(#cf-tile-s)">
+      <!-- Schoolhouse: roof with clock, white walls, two windows, arched door -->
+      <polygon points="10,30 32,12 54,30" fill="#1C1917" stroke="#1C1917" stroke-width="2.5" stroke-linejoin="round"/>
+      <circle cx="32" cy="23" r="4" fill="#fff"/>
+      <path d="M32 21 V23 H33.6" stroke="#1C1917" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      <rect x="15" y="30" width="34" height="22" fill="#fff"/>
+      <rect x="19" y="35" width="7" height="7" rx="1" fill="#1C1917"/>
+      <rect x="38" y="35" width="7" height="7" rx="1" fill="#1C1917"/>
+      <path d="M28 52 V45 a4 4 0 0 1 8 0 V52 Z" fill="#1C1917"/>
+      <rect x="10" y="51" width="44" height="4" rx="1.5" fill="#1C1917"/>
+    </g>
+  </g>
+</svg>

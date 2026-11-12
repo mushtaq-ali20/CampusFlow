@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+
+/* The dark theme is the one chosen in Filament (a `dark` class on the page), not the setting of the operating system */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../../app/Filament/**/*.php';
+
+/* Classes for runtime-injected custom pages */
+@source inline("{grid grid-cols-1 gap-8 md:grid-cols-2 md:divide-x md:divide-gray-200 dark:md:divide-gray-700 px-8 md:pl-8 mt-2 mt-4 mt-6 flex items-center justify-between gap-2 space-y-4 w-full rounded-lg border-gray-300 shadow-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 sm:text-sm text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 bg-indigo-600 hover:bg-indigo-500 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none focus:ring-2 px-4 py-2 font-semibold text-white text-xs}");
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Illustrated dashboard: the colours of the drawings for the light and dark themes, and their gentle animations */
+.school-art {
+    --art-sky: #cdeefd;
+    --art-grass: #86d99a;
+    --art-road: #a8a29e;
+    --art-wall: #fcd88a;
+    --art-wall-side: #f7c66a;
+    --art-roof: #e2553f;
+    --art-window: #ffffff;
+    --art-tree: #3fa65b;
+    --art-cloud: #ffffff;
+}
+
+.dark .school-art {
+    --art-sky: #1b2440;
+    --art-grass: #1f5a33;
+    --art-road: #44403c;
+    --art-wall: #b8893a;
+    --art-wall-side: #9c7230;
+    --art-roof: #8f2c22;
+    --art-window: #fde68a;
+    --art-tree: #226b3a;
+    --art-cloud: #3a4466;
+}
+
+.school-art .art-night { display: none; }
+.dark .school-art .art-night { display: inline; }
+.dark .school-art .art-day { display: none; }
+
+@keyframes art-drift { from { transform: translateX(-30px); } to { transform: translateX(40px); } }
+@keyframes art-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes art-wave { 0%, 100% { transform: skewY(0deg) scaleX(1); } 50% { transform: skewY(-7deg) scaleX(0.92); } }
+@keyframes art-spin { to { transform: rotate(360deg); } }
+@keyframes art-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes art-pop { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: scale(1); } }
+@keyframes art-ring { from { stroke-dashoffset: 264; } }
+@keyframes art-grow { from { width: 0; } }
+@keyframes art-bus { from { transform: translateX(-170px); } to { transform: translateX(700px); } }
+@keyframes art-walk { from { transform: translateX(0); } to { transform: translateX(90px); } }
+@keyframes art-twinkle { 50% { opacity: 0.25; } }
+@keyframes art-pulse { 0% { box-shadow: 0 0 0 0 rgb(22 163 74 / 0.5); } 100% { box-shadow: 0 0 0 8px rgb(22 163 74 / 0); } }
+
+.art-drift { animation: art-drift 10s ease-in-out infinite alternate; }
+.art-drift-slow { animation: art-drift 14s ease-in-out infinite alternate-reverse; }
+.art-bob { animation: art-bob 1.6s ease-in-out infinite; }
+.art-bob-slow { animation: art-bob 2.4s ease-in-out infinite; }
+.art-wave { transform-box: fill-box; transform-origin: left center; animation: art-wave 1.4s ease-in-out infinite; }
+.art-spin { transform-box: fill-box; transform-origin: center; animation: art-spin 30s linear infinite; }
+.art-bus { animation: art-bus 11s linear infinite; }
+.art-walk { animation: art-walk 6s ease-in-out infinite alternate; }
+.art-twinkle { animation: art-twinkle 2.4s ease-in-out infinite; }
+.art-rise { animation: art-rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.art-pop { animation: art-pop 0.45s cubic-bezier(0.3, 1.4, 0.5, 1) both; }
+.art-ring { animation: art-ring 1.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.art-grow { animation: art-grow 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.art-live { animation: art-pulse 1.6s ease-out infinite; }
+.art-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.art-lift:hover { transform: translateY(-3px); box-shadow: 0 2px 4px rgb(0 0 0 / 0.06), 0 18px 34px -16px rgb(0 0 0 / 0.35); }
+
+@media (prefers-reduced-motion: reduce) {
+    .art-drift, .art-drift-slow, .art-bob, .art-bob-slow, .art-wave, .art-spin, .art-bus, .art-walk, .art-twinkle,
+    .art-rise, .art-pop, .art-ring, .art-grow, .art-live { animation: none; }
+    .art-lift, .art-lift:hover { transition: none; transform: none; }
+}

@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Models;
+
+use App\Traits\PriceTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
+class InvoiceDetail extends Model
+{
+    use HasFactory, LogsActivity;
+    use PriceTrait;
+    use SoftDeletes;
+
+    protected $guarded = ['id'];
+
+    protected $appends = ['price_with_currency'];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logUnguarded();
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
+    /**
+     * Get the parent invoiceable model
+     */
+    public function product(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    public function getFinalPriceAttribute($value)
+    {
+        return $value ? $value / 100 : $this->price;
+    }
+
+    public function getTotalPriceAttribute($value)
+    {
+        return ($value * $this->quantity) / 100;
+    }
+}

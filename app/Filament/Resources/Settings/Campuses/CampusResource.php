@@ -1,0 +1,126 @@
+<?php
+
+namespace App\Filament\Resources\Settings\Campuses;
+
+use App\Filament\Clusters\Settings\SettingsCluster;
+use App\Filament\Concerns\RequiresClusterAccess;
+use App\Filament\Resources\Settings\Campuses\Pages\ManageCampuses;
+use App\Models\Campus;
+use BackedEnum;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class CampusResource extends Resource
+{
+    use RequiresClusterAccess;
+
+    protected static ?string $model = Campus::class;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingLibrary;
+
+    protected static ?string $cluster = SettingsCluster::class;
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('Logistics');
+    }
+
+    public static function getModelLabel(): string
+    {
+        return __('Branch');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('Branches');
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->label(__('Name'))
+                    ->required(),
+                TextInput::make('code')
+                    ->label(__('Code'))
+                    ->maxLength(20)
+                    ->unique(ignoreRecord: true),
+                TextInput::make('phone')
+                    ->label(__('Phone'))
+                    ->tel()
+                    ->maxLength(255),
+                TextInput::make('address')
+                    ->label(__('Address'))
+                    ->maxLength(255),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('name')
+                    ->label(__('Name'))
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('code')
+                    ->label(__('Code'))
+                    ->searchable(),
+                TextColumn::make('phone')
+                    ->label(__('Phone')),
+                TextColumn::make('address')
+                    ->label(__('Address'))
+                    ->wrap(),
+            ])
+            ->filters([
+                TrashedFilter::make(),
+            ])
+            ->recordActions([
+                EditAction::make(),
+                ActionGroup::make([
+                    DeleteAction::make(),
+                    ForceDeleteAction::make(),
+                    RestoreAction::make(),
+                ]),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ManageCampuses::route('/'),
+        ];
+    }
+
+    public static function getRecordRouteBindingEloquentQuery(): Builder
+    {
+        return parent::getRecordRouteBindingEloquentQuery()
+            ->withoutGlobalScopes([
+                SoftDeletingScope::class,
+            ]);
+    }
+}

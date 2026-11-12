@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Models;
+
+use App\Events\AttendanceSavedEvent;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
+class Attendance extends Model
+{
+    use HasFactory, LogsActivity;
+
+    protected $guarded = ['id'];
+
+    protected $with = ['attendanceType'];
+
+    protected $dispatchesEvents = [
+        'saved' => AttendanceSavedEvent::class,
+    ];
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()->logUnguarded();
+    }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
+
+    public function event(): BelongsTo
+    {
+        return $this->belongsTo(Event::class);
+    }
+
+    public function attendanceType(): BelongsTo
+    {
+        return $this->belongsTo(AttendanceType::class);
+    }
+
+    /**
+     * get absences count per student
+     * this is useful for monitoring the absences.
+     */
+    public function get_absence_count_per_student(Period $period)
+    {
+        // return attendance records for period
+        $coursesIds = $period->courses->pluck('id');
+        $eventsIds = Event::whereIn('course_id', $coursesIds)->pluck('id');
+
+        return self::with('event.course')->with('student')->whereIn('event_id', $eventsIds)->whereIn('attendance_type_id', [3, 4])->get()->groupBy('student_id');
+    }
+
+    public function getStudentNameAttribute(): string
+    {
+        return $this->student->name ?? '';
+    }
+}
