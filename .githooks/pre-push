@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# Refuses pushes to main. Push to develop, then open a pull request from develop into main on GitHub to release to
+# production.
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    if [ "$remote_ref" = "refs/heads/main" ]; then
+        echo ""
+        echo "  Pushing to main is not allowed."
+        echo "  Push to develop:  git push origin develop"
+        echo "  Then open a pull request from develop into main on GitHub."
+        echo ""
+        exit 1
+    fi
+done
+
+exit 0
