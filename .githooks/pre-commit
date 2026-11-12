@@ -1,15 +1,16 @@
 #!/bin/sh
 #
-# Refuses commits on main. Work on develop (or a branch made from it), then open a pull request from develop into
-# main on GitHub to release to production.
+# Refuses commits on main and develop. Work on a feature branch made from develop, then open a pull request into
+# develop on GitHub. main (production) only changes through a pull request from develop.
 
 branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
-if [ "$branch" = "main" ]; then
+if [ "$branch" = "main" ] || [ "$branch" = "develop" ]; then
     echo ""
-    echo "  Commits on main are not allowed."
-    echo "  Switch to develop:  git switch develop"
-    echo "  main only changes through a pull request from develop on GitHub."
+    echo "  Commits on $branch are not allowed."
+    echo "  Make a feature branch from develop:"
+    echo "      git switch develop && git pull && git switch -c feature/<short-name>"
+    echo "  Your uncommitted changes come along to the new branch."
     echo ""
     exit 1
 fi
