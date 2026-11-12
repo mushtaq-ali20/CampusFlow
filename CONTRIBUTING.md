@@ -24,42 +24,73 @@ Your checkout is mounted into the containers, so changes to PHP and Blade files 
 
 ## Branches
 
-| Branch | Purpose | Who changes it |
-|---|---|---|
-| `main` | Production. What runs at the schools. | Nobody commits or pushes to it. It only changes through a pull request from `develop`, merged on GitHub. |
-| `develop` | Work in progress, tested before release. | Everybody: commit and push here, or merge your own branches into it. |
+```text
+feature/<name> ──pull request + approval──► develop ──release pull request──► main (production)
+```
 
-The rule is enforced on every computer by the git hooks in `.githooks/`: they refuse a commit on `main` and a push to `main`. Turn them on once after cloning:
+| Branch | Purpose | How it changes |
+|---|---|---|
+| `main` | Production: what runs at the schools. | Only through a release pull request from `develop`. Nobody commits or pushes to it. |
+| `develop` | The next release: approved features, tested together. | Only through approved pull requests from feature branches. Nobody commits or pushes to it. |
+| `feature/<name>` | One feature or fix, such as `feature/fee-installments` or `fix/voucher-total`. | Its developer commits and pushes freely. Deleted after it is merged. |
+
+The rule is enforced on every computer by the git hooks in `.githooks/`: they refuse a commit on `main` or `develop`, and a push to `main` or `develop`. Turn them on once after cloning:
 
 ```bash
 git config core.hooksPath .githooks
 ```
 
-## Making a change
+## Developing a feature
 
-1. Start from an up-to-date `develop`:
+1. Make a feature branch from an up-to-date `develop`:
 
 ```bash
 git switch develop
 git pull
+git switch -c feature/<short-name>
 ```
 
-2. Make your change, on `develop` or on a branch made from it (`git switch -c fix-fee-voucher`). Keep features generic and configurable rather than specific to one school.
-3. Add or update tests for the behaviour you changed.
-4. Run the tests and the code style fixer:
+2. Make your change and commit as often as you like. Keep features generic and configurable rather than specific to one school.
+3. Add or update tests for the behaviour you changed, then run the tests and the code style fixer:
 
 ```bash
 docker compose exec app php artisan test
 docker compose exec app ./vendor/bin/pint
 ```
 
-5. Commit and push to `develop` (`git push origin develop`). If you worked on your own branch, push it and open a pull request into `develop`.
+4. Push the branch:
+
+```bash
+git push -u origin feature/<short-name>
+```
+
+5. On GitHub, open a pull request with **base: `develop`** and **compare: your branch**. Fill in the checklist and ask a reviewer.
+6. The reviewer reads the changes, asks for corrections if needed (push them to the same branch: the pull request updates itself), and approves.
+7. Once approved, merge with **Squash and merge**: the feature becomes one commit on `develop`. Delete the branch when GitHub offers.
+
+If `develop` moved on while you worked, bring its changes into your branch before the review:
+
+```bash
+git switch feature/<short-name>
+git pull origin develop
+git push
+```
 
 ## Releasing to production
 
-1. On GitHub, open a pull request from `develop` into `main`: https://github.com/mushtaq-ali20/CampusFlow/compare/main...develop
-2. Describe what goes to production, check the changes, and merge it with **Create a merge commit**. Do not squash: squashing gives `main` different commits from `develop`, and the next release then shows the same changes again.
-3. Deploy `main`.
+When `develop` has been tested and is ready:
+
+1. On GitHub, open a pull request with **base: `main`** and **compare: `develop`**: https://github.com/mushtaq-ali20/CampusFlow/compare/main...develop
+2. List what goes to production, check the changes, and merge with **Create a merge commit**. Do not squash a release: squashing gives `main` different commits from `develop`, and the next release would show the same changes again.
+3. Deploy `main` to the production server.
+
+## Urgent fix in production
+
+When production needs a fix that cannot wait for the next release:
+
+1. Make a branch from `main`: `git switch main && git pull && git switch -c hotfix/<short-name>`.
+2. Fix, test, push, and open a pull request into `main`. Merge it after approval and deploy.
+3. Open a second pull request from the same branch into `develop`, so the fix is not lost at the next release.
 
 ## Conventions
 

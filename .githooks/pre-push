@@ -1,17 +1,20 @@
 #!/bin/sh
 #
-# Refuses pushes to main. Push to develop, then open a pull request from develop into main on GitHub to release to
-# production.
+# Refuses pushes to main and develop. Push your feature branch and open a pull request into develop on GitHub;
+# develop goes to main (production) through a release pull request.
 
 while read -r local_ref local_sha remote_ref remote_sha; do
-    if [ "$remote_ref" = "refs/heads/main" ]; then
-        echo ""
-        echo "  Pushing to main is not allowed."
-        echo "  Push to develop:  git push origin develop"
-        echo "  Then open a pull request from develop into main on GitHub."
-        echo ""
-        exit 1
-    fi
+    case "$remote_ref" in
+        refs/heads/main|refs/heads/develop)
+            branch=${remote_ref#refs/heads/}
+            echo ""
+            echo "  Pushing to $branch is not allowed."
+            echo "  Push your feature branch:  git push -u origin <your-branch>"
+            echo "  Then open a pull request into develop on GitHub."
+            echo ""
+            exit 1
+            ;;
+    esac
 done
 
 exit 0
