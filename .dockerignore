@@ -38,3 +38,5 @@ storage/tenants
 !storage/framework/testing/.gitignore
 !storage/framework/views/.gitignore
 !storage/logs/.gitignore
+# Symlink made by storage:link in the dev container; the image makes its own
+public/storage
