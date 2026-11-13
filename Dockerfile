@@ -71,12 +71,21 @@ RUN php artisan package:discover --ansi \
     && php artisan view:clear \
     && php artisan storage:link || true
 
+# Same web server config as development. Serve plain HTTP on port 80: the hosting platform's ingress handles HTTPS.
+COPY docker/Caddyfile /etc/caddy/Caddyfile
+ENV SERVER_NAME=:80
+
+# Migrates the database and caches the configuration on each start
+COPY docker/prod-entrypoint.sh /usr/local/bin/prod-entrypoint
+RUN chmod +x /usr/local/bin/prod-entrypoint
+
 # Run as www-data. FrankenPHP may still listen on ports 80 and 443, and Caddy keeps its certificates in /data and /config.
 RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
     && chown -R www-data:www-data /app/storage /app/bootstrap/cache /data/caddy /config/caddy
 
 USER www-data
 
-EXPOSE 80 443
+EXPOSE 80
 
+ENTRYPOINT ["prod-entrypoint"]
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
