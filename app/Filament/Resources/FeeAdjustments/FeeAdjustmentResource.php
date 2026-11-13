@@ -106,7 +106,7 @@ class FeeAdjustmentResource extends Resource
                     ->label(__('Approve'))
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
-                    ->visible(fn (FeeAdjustment $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.manage') ?? false))
+                    ->visible(fn (FeeAdjustment $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
                     ->requiresConfirmation()
                     ->action(function (FeeAdjustment $record): void {
                         try {
@@ -123,7 +123,7 @@ class FeeAdjustmentResource extends Resource
                     ->label(__('Reject'))
                     ->icon(Heroicon::OutlinedXMark)
                     ->color('gray')
-                    ->visible(fn (FeeAdjustment $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.manage') ?? false))
+                    ->visible(fn (FeeAdjustment $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
                     ->requiresConfirmation()
                     ->action(fn (FeeAdjustment $record) => app(FeeAccountService::class)->rejectAdjustment($record, auth()->user())),
             ]);

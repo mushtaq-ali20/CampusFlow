@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Events\UserDeleting;
+use App\Services\AccessModules;
 use App\Services\ActiveBranch;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
@@ -25,9 +26,38 @@ class User extends Authenticatable implements FilamentUser
     use Notifiable;
     use SoftDeletes;
 
+    /**
+     * Anyone with a role, or a teacher profile, uses the staff screens, unless they were deactivated.
+     */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->hasAnyRole(['admin', 'secretary', 'viewer']) || $this->isTeacher();
+        return $this->isActive() && ($this->roles->isNotEmpty() || $this->isTeacher());
+    }
+
+    /**
+     * Whether the user may sign in, whether they must change their password, and their last sign-in.
+     */
+    public function accessState(): HasOne
+    {
+        return $this->hasOne(UserAccessState::class);
+    }
+
+    /**
+     * A deactivated user cannot sign in; their records are kept.
+     */
+    public function isActive(): bool
+    {
+        return $this->accessState?->is_active ?? true;
+    }
+
+    public function mustChangePassword(): bool
+    {
+        return $this->accessState?->must_change_password ?? false;
+    }
+
+    public function isAdministrator(): bool
+    {
+        return $this->hasRole(AccessModules::ADMINISTRATOR);
     }
 
     protected $guarded = ['id'];
