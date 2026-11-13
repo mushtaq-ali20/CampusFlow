@@ -36,6 +36,7 @@ use App\Filament\Resources\Staff\StaffResource;
 use App\Filament\Resources\Students\StudentResource;
 use App\Filament\Resources\Teachers\TeacherResource;
 use App\Filament\Resources\VendorBills\VendorBillResource;
+use App\Http\Middleware\EnsurePasswordIsChanged;
 use App\Http\Middleware\NeedsTenant;
 use App\Http\Middleware\SetLocale;
 use App\Services\ActiveBranch;
@@ -170,6 +171,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                EnsurePasswordIsChanged::class,
             ]);
     }
 }

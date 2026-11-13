@@ -54,6 +54,8 @@ class StaffResourceTest extends TestCase
         $this->assertTrue($user->hasRole('secretary'));
         $this->assertSame($branch->id, $user->campus_id);
         $this->assertTrue(Hash::check('secret-pass', $user->password));
+        $this->assertTrue($user->mustChangePassword());
+        $this->assertTrue($user->isActive());
     }
 
     public function test_an_administrator_is_never_limited_to_a_branch(): void
@@ -111,41 +113,40 @@ class StaffResourceTest extends TestCase
         $this->assertTrue(Hash::check('old-password', $staff->password));
     }
 
-    public function test_only_users_with_a_role_are_listed(): void
+    public function test_users_with_a_role_and_teachers_are_listed_but_not_parents_or_students(): void
     {
         $this->actingAsRole('admin');
         $staff = User::factory()->create();
         $staff->assignRole('secretary');
-        $teacherOnly = Teacher::factory()->create()->user;
+        $teacher = Teacher::factory()->create()->user;
+        $withoutRole = User::factory()->create();
 
         Livewire::test(ManageStaff::class)
-            ->assertCanSeeTableRecords([$staff])
-            ->assertCanNotSeeTableRecords([$teacherOnly]);
+            ->assertCanSeeTableRecords([$staff, $teacher])
+            ->assertCanNotSeeTableRecords([$withoutRole]);
     }
 
-    public function test_removing_access_keeps_the_user_and_their_teacher_profile(): void
+    public function test_deactivating_keeps_the_user_and_their_teacher_profile(): void
     {
         $this->actingAsRole('admin');
         $teacher = Teacher::factory()->create();
         $user = $teacher->user;
-        $user->assignRole('secretary');
-        $user->update(['campus_id' => Campus::factory()->create()->id]);
 
         Livewire::test(ManageStaff::class)
-            ->callAction(TestAction::make('removeAccess')->table($user));
+            ->callAction(TestAction::make('deactivate')->table($user));
 
         $user->refresh();
-        $this->assertSame([], $user->getRoleNames()->all());
-        $this->assertNull($user->campus_id);
+        $this->assertFalse($user->isActive());
+        $this->assertSame(['teacher'], $user->getRoleNames()->all());
         $this->assertTrue(Teacher::query()->whereKey($teacher->id)->exists());
     }
 
-    public function test_admin_cannot_remove_their_own_access(): void
+    public function test_admin_cannot_deactivate_themselves(): void
     {
         $admin = $this->actingAsRole('admin');
 
         Livewire::test(ManageStaff::class)
-            ->assertActionHidden(TestAction::make('removeAccess')->table($admin));
+            ->assertActionHidden(TestAction::make('deactivate')->table($admin));
     }
 
     public function test_secretaries_cannot_manage_staff(): void
