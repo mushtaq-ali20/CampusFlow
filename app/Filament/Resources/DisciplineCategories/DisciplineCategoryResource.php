@@ -37,7 +37,7 @@ class DisciplineCategoryResource extends Resource
 
     protected static ?string $model = DisciplineCategory::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQueueList;
 
     protected static ?int $navigationSort = 20;
 
