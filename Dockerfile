@@ -71,9 +71,10 @@ RUN php artisan package:discover --ansi \
     && php artisan view:clear \
     && php artisan storage:link || true
 
-# Same web server config as development. Serve plain HTTP on port 80: the hosting platform's ingress handles HTTPS.
+# Same web server config as development. Serve plain HTTP on port 8080: the hosting platform's ingress handles HTTPS,
+# and a port above 1024 needs no extra privileges for www-data. Point the ingress target port and probes at 8080.
 COPY docker/Caddyfile /etc/caddy/Caddyfile
-ENV SERVER_NAME=:80
+ENV SERVER_NAME=:8080
 
 # Migrates the database and caches the configuration on each start
 COPY docker/prod-entrypoint.sh /usr/local/bin/prod-entrypoint
@@ -85,7 +86,7 @@ RUN setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
 
 USER www-data
 
-EXPOSE 80
+EXPOSE 8080
 
 ENTRYPOINT ["prod-entrypoint"]
 CMD ["frankenphp", "run", "--config", "/etc/caddy/Caddyfile"]
