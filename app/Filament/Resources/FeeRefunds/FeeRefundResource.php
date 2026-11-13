@@ -109,7 +109,7 @@ class FeeRefundResource extends Resource
                     ->label(__('Approve'))
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
-                    ->visible(fn (FeeRefund $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.manage') ?? false))
+                    ->visible(fn (FeeRefund $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
                     ->schema([
                         DatePicker::make('refunded_on')->label(__('Given back on'))->default(now())->maxDate(now())->required(),
                     ])
@@ -128,7 +128,7 @@ class FeeRefundResource extends Resource
                     ->label(__('Reject'))
                     ->icon(Heroicon::OutlinedXMark)
                     ->color('gray')
-                    ->visible(fn (FeeRefund $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.manage') ?? false))
+                    ->visible(fn (FeeRefund $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
                     ->requiresConfirmation()
                     ->action(fn (FeeRefund $record) => app(FeeAccountService::class)->rejectRefund($record, auth()->user())),
             ]);

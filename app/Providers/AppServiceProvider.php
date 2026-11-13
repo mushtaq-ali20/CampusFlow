@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Services\ActiveBranch;
 use App\Services\CourseEventScheduler;
 use App\Services\Settings;
@@ -40,8 +41,18 @@ class AppServiceProvider extends ServiceProvider
 
         $this->registerGates();
 
+        // The administrator is the super user: every right, on every module, including the ones added later
+        Gate::before(fn ($user): ?bool => $user instanceof User && $user->isAdministrator() ? true : null);
+
         // Every sign-in starts on all branches
         Event::listen(Login::class, fn (): mixed => app(ActiveBranch::class)->reset());
+
+        // The Users screen shows when each person last signed in
+        Event::listen(Login::class, function (Login $event): void {
+            if ($event->user instanceof User) {
+                $event->user->accessState()->updateOrCreate([], ['last_login_at' => now()]);
+            }
+        });
 
         // Used by the registration, the student account and Filament's password reset
         Password::defaults(fn (): Password => Password::min(8));

@@ -15,7 +15,8 @@ class ManageStaff extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->using(fn (array $data): User => StaffResource::saveStaffMember(new User, $data)),
+                ->label(__('New user'))
+                ->using(fn (array $data): User => StaffResource::save(new User, $data)),
         ];
     }
 }

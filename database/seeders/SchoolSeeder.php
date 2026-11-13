@@ -15,6 +15,7 @@ use App\Models\Year;
 use App\Services\Settings;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
+use Spatie\Permission\Models\Role;
 
 /**
  * Demo data for a school with two branches and two shifts: classes from Montessori to Class 10 with their subjects,
@@ -255,6 +256,23 @@ class SchoolSeeder extends Seeder
             $user->update(['campus_id' => $branch->id]);
             $user->syncRoles(['secretary']);
         }
+
+        $this->schoolWideUser('principal@campusflow.test', 'Farah', 'Siddiqui', 'principal');
+        $this->schoolWideUser('accountant@campusflow.test', 'Ahmed', 'Khan', 'accountant');
+    }
+
+    /**
+     * A demo user who works across all branches, when their role exists (it is made by a migration).
+     */
+    private function schoolWideUser(string $email, string $firstname, string $lastname, string $role): void
+    {
+        if (! Role::query()->where('name', $role)->exists()) {
+            return;
+        }
+
+        User::query()
+            ->firstOrCreate(['email' => $email], ['firstname' => $firstname, 'lastname' => $lastname, 'password' => bcrypt('secret')])
+            ->syncRoles([$role]);
     }
 
     private function academicYear(): Year

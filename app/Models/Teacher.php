@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\AccessModules;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Permission\Models\Role;
 
 class Teacher extends Model
 {
@@ -33,6 +35,26 @@ class Teacher extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->logUnguarded();
+    }
+
+    /**
+     * A new teacher who has no role yet gets the Teacher role, to which an administrator can add module access.
+     */
+    protected static function booted(): void
+    {
+        static::created(function (self $teacher): void {
+            $user = $teacher->user;
+
+            if ($user === null || $user->roles()->exists()) {
+                return;
+            }
+
+            $role = Role::query()->where('name', AccessModules::TEACHER)->where('guard_name', 'web')->first();
+
+            if ($role !== null) {
+                $user->assignRole($role);
+            }
+        });
     }
 
     /** relations */

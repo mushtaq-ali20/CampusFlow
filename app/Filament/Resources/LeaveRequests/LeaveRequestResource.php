@@ -80,6 +80,14 @@ class LeaveRequestResource extends Resource
         return auth()->user()?->can('employees.manage') ?? false;
     }
 
+    /**
+     * Approving leave is a right of its own, given on the Roles screen (the Principal has it).
+     */
+    protected static function approvesLeave(): bool
+    {
+        return auth()->user()?->can('leaves.approve') ?? false;
+    }
+
     public static function getNavigationBadge(): ?string
     {
         if (! (auth()->user()?->can('employees.view') ?? false)) {
@@ -195,7 +203,7 @@ class LeaveRequestResource extends Resource
                     ->label(__('Approve'))
                     ->icon(Heroicon::OutlinedCheck)
                     ->color('success')
-                    ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && static::managesEmployees())
+                    ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && static::approvesLeave())
                     ->requiresConfirmation()
                     ->action(function (LeaveRequest $record): void {
                         try {
@@ -212,7 +220,7 @@ class LeaveRequestResource extends Resource
                     ->label(__('Reject'))
                     ->icon(Heroicon::OutlinedXMark)
                     ->color('gray')
-                    ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && static::managesEmployees())
+                    ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && static::approvesLeave())
                     ->schema([TextInput::make('note')->label(__('Reason for rejecting'))->maxLength(255)])
                     ->action(function (LeaveRequest $record, array $data): void {
                         try {
