@@ -34,7 +34,7 @@ class LeaveResource extends Resource
 
     protected static ?string $model = Leave::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendar;
 
     protected static ?int $navigationSort = 530;
 
