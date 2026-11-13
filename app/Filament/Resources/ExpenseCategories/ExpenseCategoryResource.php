@@ -30,7 +30,7 @@ class ExpenseCategoryResource extends Resource
 
     protected static ?string $model = ExpenseCategory::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFolder;
 
     protected static ?int $navigationSort = 630;
 

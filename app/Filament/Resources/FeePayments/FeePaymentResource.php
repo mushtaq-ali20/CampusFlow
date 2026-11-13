@@ -26,7 +26,7 @@ class FeePaymentResource extends Resource
 {
     protected static ?string $model = FeePayment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedReceiptRefund;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
     protected static ?int $navigationSort = 50;
 

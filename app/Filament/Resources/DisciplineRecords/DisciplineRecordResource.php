@@ -43,7 +43,7 @@ class DisciplineRecordResource extends Resource
 {
     protected static ?string $model = DisciplineRecord::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFlag;
 
     protected static ?int $navigationSort = 10;
 

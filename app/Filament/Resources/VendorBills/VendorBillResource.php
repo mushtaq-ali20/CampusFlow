@@ -39,7 +39,7 @@ class VendorBillResource extends Resource
 {
     protected static ?string $model = VendorBill::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentCurrencyDollar;
 
     protected static ?int $navigationSort = 600;
 

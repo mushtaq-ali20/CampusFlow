@@ -32,7 +32,7 @@ class LeaveAllowanceResource extends Resource
 
     protected static ?string $model = LeaveAllowance::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsVertical;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedScale;
 
     protected static ?int $navigationSort = 535;
 

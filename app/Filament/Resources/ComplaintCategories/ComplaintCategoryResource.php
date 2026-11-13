@@ -33,7 +33,7 @@ class ComplaintCategoryResource extends Resource
 
     protected static ?string $model = ComplaintCategory::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
     protected static ?int $navigationSort = 80;
 

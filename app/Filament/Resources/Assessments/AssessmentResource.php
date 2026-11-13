@@ -43,7 +43,7 @@ class AssessmentResource extends Resource
 {
     protected static ?string $model = Assessment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPencilSquare;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
     protected static ?int $navigationSort = 9;
 

@@ -88,6 +88,18 @@ class AdmissionEnquiryResource extends Resource
         return parent::getEloquentQuery()->visibleTo(auth()->user());
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = auth()->check() ? static::getEloquentQuery()->where('status', EnquiryStatus::InProcess)->count() : 0;
+
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeTooltip(): ?string
+    {
+        return __('Enquiries still in process');
+    }
+
     /**
      * @return array<int, string>
      */

@@ -27,7 +27,7 @@ class StudentLedger extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookOpen;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBookmarkSquare;
 
     protected static ?int $navigationSort = 75;
 
