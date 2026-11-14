@@ -11,6 +11,7 @@ use App\Services\FeeService;
 use BackedEnum;
 use DomainException;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -123,14 +124,17 @@ class FeeRefundResource extends Resource
                         }
 
                         Notification::make()->title(__('Refund approved'))->success()->send();
-                    }),
-                Action::make('reject')
-                    ->label(__('Reject'))
-                    ->icon(Heroicon::OutlinedXMark)
-                    ->color('gray')
-                    ->visible(fn (FeeRefund $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
-                    ->requiresConfirmation()
-                    ->action(fn (FeeRefund $record) => app(FeeAccountService::class)->rejectRefund($record, auth()->user())),
+                    })
+                    ->button(),
+                ActionGroup::make([
+                    Action::make('reject')
+                        ->label(__('Reject'))
+                        ->icon(Heroicon::OutlinedXMark)
+                        ->color('danger')
+                        ->visible(fn (FeeRefund $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
+                        ->requiresConfirmation()
+                        ->action(fn (FeeRefund $record) => app(FeeAccountService::class)->rejectRefund($record, auth()->user())),
+                ]),
             ]);
     }
 

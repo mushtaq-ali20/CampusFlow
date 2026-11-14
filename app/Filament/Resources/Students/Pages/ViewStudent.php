@@ -20,7 +20,9 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * The student's profile: their details and comments, a summary of the year, then their attendance, results, fees,
@@ -43,18 +45,19 @@ class ViewStudent extends ViewRecord
         'messages' => ParentMessagesRelationManager::class,
     ];
 
+    /**
+     * The profile card under the header carries the student's name, so the page has no heading of its own.
+     */
+    public function getHeading(): string|Htmlable
+    {
+        return '';
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             SendWhatsAppAction::make(),
             EditAction::make(),
-        ];
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            StudentOverview::class,
         ];
     }
 
@@ -64,6 +67,9 @@ class ViewStudent extends ViewRecord
         $livewireData = ['ownerRecord' => $ownerRecord, 'pageClass' => static::class];
 
         return $schema->components([
+            View::make('filament.resources.students.profile-header')
+                ->viewData(['student' => $ownerRecord->loadMissing('latestAdmission.section', 'latestAdmission.campus', 'latestAdmission.year')]),
+            Livewire::make(StudentOverview::class, ['record' => $ownerRecord])->key('overview'),
             Grid::make(['default' => 1, 'lg' => 2])->schema([
                 $this->getInfolistContentComponent()->columnSpan(1),
                 Livewire::make(CommentsRelationManager::class, [

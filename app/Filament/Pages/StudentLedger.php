@@ -11,6 +11,7 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -70,13 +71,15 @@ class StudentLedger extends Page implements HasTable
     {
         return $schema
             ->components([
-                Select::make('student_id')
-                    ->label(__('Student'))
-                    ->searchable()
-                    ->getSearchResultsUsing(fn (string $search): array => AdmissionResource::searchStudents($search))
-                    ->getOptionLabelUsing(fn ($value): ?string => Student::query()->find($value)?->name)
-                    ->live()
-                    ->afterStateUpdated(fn () => $this->resetTable()),
+                Grid::make()->schema([
+                    Select::make('student_id')
+                        ->label(__('Student'))
+                        ->searchable()
+                        ->getSearchResultsUsing(fn (string $search): array => AdmissionResource::searchStudents($search))
+                        ->getOptionLabelUsing(fn ($value): ?string => Student::query()->find($value)?->name)
+                        ->live()
+                        ->afterStateUpdated(fn () => $this->resetTable()),
+                ])->extraAttributes(['class' => 'cf-filter-bar']),
             ])
             ->statePath('filters');
     }

@@ -10,6 +10,7 @@ use App\Services\UserAccessService;
 use BackedEnum;
 use DomainException;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -212,23 +213,27 @@ class StaffResource extends Resource
             ])
             ->recordActions([
                 EditAction::make()
+                    ->button()
+                    ->color('gray')
                     ->visible(fn (User $record): bool => static::canChange($record))
                     ->mutateRecordDataUsing(fn (array $data, User $record): array => [...$data, 'role' => $record->roles->first()?->name, 'is_active' => $record->isActive()])
                     ->using(fn (User $record, array $data): User => static::save($record, $data)),
-                Action::make('deactivate')
-                    ->label(__('Deactivate'))
-                    ->icon(Heroicon::OutlinedNoSymbol)
-                    ->color('danger')
-                    ->visible(fn (User $record): bool => $record->isActive() && static::canChange($record) && ! $record->is(auth()->user()))
-                    ->requiresConfirmation()
-                    ->modalDescription(__('The person can no longer sign in. Their records and history are kept, and they can be activated again.'))
-                    ->action(fn (User $record) => static::attempt(fn () => app(UserAccessService::class)->deactivate($record, auth()->user()), __('User deactivated'))),
-                Action::make('activate')
-                    ->label(__('Activate'))
-                    ->icon(Heroicon::OutlinedCheckCircle)
-                    ->color('success')
-                    ->visible(fn (User $record): bool => ! $record->isActive() && static::canChange($record))
-                    ->action(fn (User $record) => static::attempt(fn () => app(UserAccessService::class)->activate($record), __('User activated'))),
+                ActionGroup::make([
+                    Action::make('deactivate')
+                        ->label(__('Deactivate'))
+                        ->icon(Heroicon::OutlinedNoSymbol)
+                        ->color('danger')
+                        ->visible(fn (User $record): bool => $record->isActive() && static::canChange($record) && ! $record->is(auth()->user()))
+                        ->requiresConfirmation()
+                        ->modalDescription(__('The person can no longer sign in. Their records and history are kept, and they can be activated again.'))
+                        ->action(fn (User $record) => static::attempt(fn () => app(UserAccessService::class)->deactivate($record, auth()->user()), __('User deactivated'))),
+                    Action::make('activate')
+                        ->label(__('Activate'))
+                        ->icon(Heroicon::OutlinedCheckCircle)
+                        ->color('success')
+                        ->visible(fn (User $record): bool => ! $record->isActive() && static::canChange($record))
+                        ->action(fn (User $record) => static::attempt(fn () => app(UserAccessService::class)->activate($record), __('User activated'))),
+                ]),
             ]);
     }
 

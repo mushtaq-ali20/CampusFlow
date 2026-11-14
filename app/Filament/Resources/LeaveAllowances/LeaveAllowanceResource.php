@@ -7,6 +7,7 @@ use App\Filament\Resources\LeaveAllowances\Pages\ManageLeaveAllowances;
 use App\Models\LeaveAllowance;
 use App\Models\LeaveType;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -91,8 +92,10 @@ class LeaveAllowanceResource extends Resource
                 IconColumn::make('is_paid')->label(__('Paid'))->boolean(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    DeleteAction::make(),
+                ]),
             ]);
     }
 

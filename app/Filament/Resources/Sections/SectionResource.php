@@ -17,6 +17,7 @@ use App\Models\Section;
 use App\Models\Teacher;
 use App\Models\Year;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -24,6 +25,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section as FormSection;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -111,54 +113,75 @@ class SectionResource extends Resource
     {
         return $schema
             ->components([
-                Select::make('campus_id')
-                    ->label(__('Branch'))
-                    ->options(fn (): array => static::branchOptions())
-                    ->default(fn (): ?int => auth()->user()?->activeBranchId())
-                    ->required()
-                    ->live(),
-                Select::make('school_class_id')
-                    ->label(__('Class'))
-                    ->options(fn (): array => SchoolClass::query()->ordered()->pluck('name', 'id')->all())
-                    ->required()
-                    ->live(),
-                Select::make('year_id')
-                    ->label(__('Academic Year'))
-                    ->options(fn (): array => Year::query()->latest('id')->pluck('name', 'id')->all())
-                    ->default(fn (): ?int => Year::current()?->id)
-                    ->required()
-                    ->live(),
-                Select::make('shift')
-                    ->label(__('Shift'))
-                    ->options(Shift::class)
-                    ->default(Shift::Morning)
-                    ->required()
-                    ->live(),
-                TextInput::make('name')
-                    ->label(__('Section'))
-                    ->placeholder('A')
-                    ->required()
-                    ->maxLength(20)
-                    ->unique(
-                        ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule
-                            ->where('campus_id', $get('campus_id'))
-                            ->where('school_class_id', $get('school_class_id'))
-                            ->where('year_id', $get('year_id'))
-                            ->where('shift', $get('shift') instanceof Shift ? $get('shift')->value : $get('shift')),
-                    )
-                    ->validationMessages([
-                        'unique' => __('This section already exists for this class, shift, branch and academic year.'),
+                FormSection::make(__('Placement'))
+                    ->description(__('The branch, class, academic year and shift this section belongs to.'))
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->columnSpanFull()
+                    ->schema([
+                        Select::make('campus_id')
+                            ->label(__('Branch'))
+                            ->options(fn (): array => static::branchOptions())
+                            ->default(fn (): ?int => auth()->user()?->activeBranchId())
+                            ->required()
+                            ->live(),
+                        Select::make('school_class_id')
+                            ->label(__('Class'))
+                            ->options(fn (): array => SchoolClass::query()->ordered()->pluck('name', 'id')->all())
+                            ->required()
+                            ->live(),
+                        Select::make('year_id')
+                            ->label(__('Academic Year'))
+                            ->options(fn (): array => Year::query()->latest('id')->pluck('name', 'id')->all())
+                            ->default(fn (): ?int => Year::current()?->id)
+                            ->required()
+                            ->live(),
+                        Select::make('shift')
+                            ->label(__('Shift'))
+                            ->options(Shift::class)
+                            ->default(Shift::Morning)
+                            ->required()
+                            ->live(),
                     ]),
-                TextInput::make('capacity')
-                    ->label(__('Capacity'))
-                    ->integer()
-                    ->minValue(1),
-                Select::make('class_teacher_id')
-                    ->label(__('Class teacher'))
-                    ->options(fn (): array => static::teacherOptions())
-                    ->searchable(),
+
+                FormSection::make(__('Section details'))
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->columnSpanFull()
+                    ->schema(static::sectionDetailsFields()),
             ]);
+    }
+
+    /**
+     * @return array<int, TextInput|Select>
+     */
+    private static function sectionDetailsFields(): array
+    {
+        return [
+            TextInput::make('name')
+                ->label(__('Section'))
+                ->placeholder('A')
+                ->required()
+                ->maxLength(20)
+                ->unique(
+                    ignoreRecord: true,
+                    modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule
+                        ->where('campus_id', $get('campus_id'))
+                        ->where('school_class_id', $get('school_class_id'))
+                        ->where('year_id', $get('year_id'))
+                        ->where('shift', $get('shift') instanceof Shift ? $get('shift')->value : $get('shift')),
+                )
+                ->validationMessages([
+                    'unique' => __('This section already exists for this class, shift, branch and academic year.'),
+                ]),
+            TextInput::make('capacity')
+                ->label(__('Capacity'))
+                ->integer()
+                ->minValue(1),
+            Select::make('class_teacher_id')
+                ->label(__('Class teacher'))
+                ->options(fn (): array => static::teacherOptions())
+                ->searchable()
+                ->columnSpanFull(),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -216,8 +239,10 @@ class SectionResource extends Resource
                     ->options(Shift::class),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

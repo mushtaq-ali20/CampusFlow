@@ -14,6 +14,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Year;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
@@ -22,6 +23,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section as FormSection;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -100,60 +102,61 @@ class PtmEventResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('title')
-                    ->label(__('Title'))
-                    ->placeholder(__('Mid-term PTM'))
-                    ->required()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Select::make('campus_id')
-                    ->label(__('Branch'))
-                    ->options(fn (): array => SectionResource::branchOptions())
-                    ->default(fn (): ?int => auth()->user()?->activeBranchId())
-                    ->required()
-                    ->live(),
-                Select::make('year_id')
-                    ->label(__('Academic Year'))
-                    ->options(fn (): array => Year::query()->orderByDesc('start')->pluck('name', 'id')->all())
-                    ->default(fn (): ?int => Year::current()?->id)
-                    ->required()
-                    ->live(),
-                DatePicker::make('date')
-                    ->label(__('Date'))
-                    ->required(),
-                TimePicker::make('starts_at')
-                    ->label(__('First slot at'))
-                    ->seconds(false)
-                    ->default('09:00')
-                    ->required(),
-                TextInput::make('slot_minutes')
-                    ->label(__('Minutes per family'))
-                    ->integer()
-                    ->minValue(5)
-                    ->maxValue(60)
-                    ->default(10)
-                    ->required(),
-                Select::make('sections')
-                    ->label(__('Sections'))
-                    ->helperText(__('Each student of these sections gets a slot with the class teacher. Saving adds the slots of new students and sections.'))
-                    ->multiple()
-                    ->relationship(
-                        'sections',
-                        'name',
-                        modifyQueryUsing: fn (Builder $query, Get $get) => $query
-                            ->where('campus_id', $get('campus_id'))
-                            ->where('year_id', $get('year_id'))
-                            ->with('schoolClass'),
-                    )
-                    ->getOptionLabelFromRecordUsing(fn (Section $record): string => $record->full_name)
-                    ->preload()
-                    ->required()
-                    ->columnSpanFull(),
-                Textarea::make('notes')
-                    ->label(__('Notes'))
-                    ->columnSpanFull(),
-            ])
-            ->columns(3);
+                FormSection::make()->columns(3)->columnSpanFull()->schema([
+                    TextInput::make('title')
+                        ->label(__('Title'))
+                        ->placeholder(__('Mid-term PTM'))
+                        ->required()
+                        ->maxLength(255)
+                        ->columnSpanFull(),
+                    Select::make('campus_id')
+                        ->label(__('Branch'))
+                        ->options(fn (): array => SectionResource::branchOptions())
+                        ->default(fn (): ?int => auth()->user()?->activeBranchId())
+                        ->required()
+                        ->live(),
+                    Select::make('year_id')
+                        ->label(__('Academic Year'))
+                        ->options(fn (): array => Year::query()->orderByDesc('start')->pluck('name', 'id')->all())
+                        ->default(fn (): ?int => Year::current()?->id)
+                        ->required()
+                        ->live(),
+                    DatePicker::make('date')
+                        ->label(__('Date'))
+                        ->required(),
+                    TimePicker::make('starts_at')
+                        ->label(__('First slot at'))
+                        ->seconds(false)
+                        ->default('09:00')
+                        ->required(),
+                    TextInput::make('slot_minutes')
+                        ->label(__('Minutes per family'))
+                        ->integer()
+                        ->minValue(5)
+                        ->maxValue(60)
+                        ->default(10)
+                        ->required(),
+                    Select::make('sections')
+                        ->label(__('Sections'))
+                        ->helperText(__('Each student of these sections gets a slot with the class teacher. Saving adds the slots of new students and sections.'))
+                        ->multiple()
+                        ->relationship(
+                            'sections',
+                            'name',
+                            modifyQueryUsing: fn (Builder $query, Get $get) => $query
+                                ->where('campus_id', $get('campus_id'))
+                                ->where('year_id', $get('year_id'))
+                                ->with('schoolClass'),
+                        )
+                        ->getOptionLabelFromRecordUsing(fn (Section $record): string => $record->full_name)
+                        ->preload()
+                        ->required()
+                        ->columnSpanFull(),
+                    Textarea::make('notes')
+                        ->label(__('Notes'))
+                        ->columnSpanFull(),
+                ]),
+            ]);
     }
 
     public static function table(Table $table): Table
@@ -181,8 +184,10 @@ class PtmEventResource extends Resource
                     ->alignEnd(),
             ])
             ->recordActions([
-                ViewAction::make()->label(__('Open')),
-                EditAction::make(),
+                ViewAction::make()->label(__('Open'))->button()->color('gray'),
+                ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ]);
     }
 

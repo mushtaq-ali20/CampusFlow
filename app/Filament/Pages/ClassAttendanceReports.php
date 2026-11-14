@@ -15,6 +15,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -118,55 +119,56 @@ class ClassAttendanceReports extends Page implements HasTable
 
         return $schema
             ->components([
-                ToggleButtons::make('report')
-                    ->label(__('Report'))
-                    ->options(self::reportOptions())
-                    ->inline()
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated($reload)
-                    ->columnSpanFull(),
-                DatePicker::make('date')
-                    ->label(__('Date'))
-                    ->maxDate(now())
-                    ->live()
-                    ->afterStateUpdated($reload)
-                    ->visible(fn (Get $get): bool => $get('report') === self::CLASS_WISE),
-                DatePicker::make('from')
-                    ->label(__('From'))
-                    ->maxDate(now())
-                    ->live()
-                    ->afterStateUpdated($reload)
-                    ->visible(fn (Get $get): bool => in_array($get('report'), [self::ABSENTEES, self::LATE_COMERS], true)),
-                DatePicker::make('until')
-                    ->label(__('To'))
-                    ->maxDate(now())
-                    ->live()
-                    ->afterStateUpdated($reload)
-                    ->visible(fn (Get $get): bool => in_array($get('report'), [self::ABSENTEES, self::LATE_COMERS], true)),
-                Select::make('month')
-                    ->label(__('Month'))
-                    ->options(self::monthOptions())
-                    ->live()
-                    ->afterStateUpdated($reload)
-                    ->visible(fn (Get $get): bool => $get('report') === self::MONTHLY),
-                Select::make('section_id')
-                    ->label(__('Section'))
-                    ->placeholder(__('All sections'))
-                    ->options(fn (): array => Section::query()
-                        ->visibleTo(auth()->user())
-                        ->whereHas('admissions')
-                        ->with(['schoolClass', 'campus'])
-                        ->get()
-                        ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
-                        ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
-                        ->all())
-                    ->searchable()
-                    ->live()
-                    ->afterStateUpdated($reload)
-                    ->visible(fn (Get $get): bool => $get('report') !== self::CLASS_WISE),
+                Grid::make()->schema([
+                    ToggleButtons::make('report')
+                        ->label(__('Report'))
+                        ->options(self::reportOptions())
+                        ->inline()
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated($reload)
+                        ->extraFieldWrapperAttributes(['class' => 'cf-filter-full']),
+                    DatePicker::make('date')
+                        ->label(__('Date'))
+                        ->maxDate(now())
+                        ->live()
+                        ->afterStateUpdated($reload)
+                        ->visible(fn (Get $get): bool => $get('report') === self::CLASS_WISE),
+                    DatePicker::make('from')
+                        ->label(__('From'))
+                        ->maxDate(now())
+                        ->live()
+                        ->afterStateUpdated($reload)
+                        ->visible(fn (Get $get): bool => in_array($get('report'), [self::ABSENTEES, self::LATE_COMERS], true)),
+                    DatePicker::make('until')
+                        ->label(__('To'))
+                        ->maxDate(now())
+                        ->live()
+                        ->afterStateUpdated($reload)
+                        ->visible(fn (Get $get): bool => in_array($get('report'), [self::ABSENTEES, self::LATE_COMERS], true)),
+                    Select::make('month')
+                        ->label(__('Month'))
+                        ->options(self::monthOptions())
+                        ->live()
+                        ->afterStateUpdated($reload)
+                        ->visible(fn (Get $get): bool => $get('report') === self::MONTHLY),
+                    Select::make('section_id')
+                        ->label(__('Section'))
+                        ->placeholder(__('All sections'))
+                        ->options(fn (): array => Section::query()
+                            ->visibleTo(auth()->user())
+                            ->whereHas('admissions')
+                            ->with(['schoolClass', 'campus'])
+                            ->get()
+                            ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
+                            ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
+                            ->all())
+                        ->searchable()
+                        ->live()
+                        ->afterStateUpdated($reload)
+                        ->visible(fn (Get $get): bool => $get('report') !== self::CLASS_WISE),
+                ])->extraAttributes(['class' => 'cf-filter-bar']),
             ])
-            ->columns(['default' => 1, 'md' => 3])
             ->statePath('filters');
     }
 

@@ -12,6 +12,7 @@ use App\Services\LeaveRequestService;
 use BackedEnum;
 use DomainException;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -215,33 +216,36 @@ class LeaveRequestResource extends Resource
                         }
 
                         Notification::make()->title(__('Leave approved'))->success()->send();
-                    }),
-                Action::make('reject')
-                    ->label(__('Reject'))
-                    ->icon(Heroicon::OutlinedXMark)
-                    ->color('gray')
-                    ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && static::approvesLeave())
-                    ->schema([TextInput::make('note')->label(__('Reason for rejecting'))->maxLength(255)])
-                    ->action(function (LeaveRequest $record, array $data): void {
-                        try {
-                            app(LeaveRequestService::class)->reject($record, auth()->user(), $data['note'] ?? null);
-                        } catch (DomainException $exception) {
-                            Notification::make()->title($exception->getMessage())->danger()->send();
-                        }
-                    }),
-                Action::make('cancel')
-                    ->label(__('Withdraw'))
-                    ->icon(Heroicon::OutlinedTrash)
-                    ->color('danger')
-                    ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && ($record->user_id === auth()->id() || static::managesEmployees()))
-                    ->requiresConfirmation()
-                    ->action(function (LeaveRequest $record): void {
-                        try {
-                            app(LeaveRequestService::class)->cancel($record);
-                        } catch (DomainException $exception) {
-                            Notification::make()->title($exception->getMessage())->danger()->send();
-                        }
-                    }),
+                    })
+                    ->button(),
+                ActionGroup::make([
+                    Action::make('reject')
+                        ->label(__('Reject'))
+                        ->icon(Heroicon::OutlinedXMark)
+                        ->color('danger')
+                        ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && static::approvesLeave())
+                        ->schema([TextInput::make('note')->label(__('Reason for rejecting'))->maxLength(255)])
+                        ->action(function (LeaveRequest $record, array $data): void {
+                            try {
+                                app(LeaveRequestService::class)->reject($record, auth()->user(), $data['note'] ?? null);
+                            } catch (DomainException $exception) {
+                                Notification::make()->title($exception->getMessage())->danger()->send();
+                            }
+                        }),
+                    Action::make('cancel')
+                        ->label(__('Withdraw'))
+                        ->icon(Heroicon::OutlinedTrash)
+                        ->color('danger')
+                        ->visible(fn (LeaveRequest $record): bool => $record->status === RequestStatus::Pending && ($record->user_id === auth()->id() || static::managesEmployees()))
+                        ->requiresConfirmation()
+                        ->action(function (LeaveRequest $record): void {
+                            try {
+                                app(LeaveRequestService::class)->cancel($record);
+                            } catch (DomainException $exception) {
+                                Notification::make()->title($exception->getMessage())->danger()->send();
+                            }
+                        }),
+                ]),
             ]);
     }
 
