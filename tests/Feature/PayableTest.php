@@ -13,12 +13,14 @@ use App\Models\ExpenseCategory;
 use App\Models\User;
 use App\Models\Vendor;
 use App\Models\VendorBill;
+use App\Services\FeeService;
 use App\Services\PayableService;
 use Database\Seeders\PermissionsSeeder;
 use DomainException;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Str;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -223,6 +225,16 @@ class PayableTest extends TestCase
             ->assertActionHidden(TestAction::make('cancel')->table($bill));
 
         $this->assertSame([BillStatus::Partial, 5000, $category->id], [$bill->refresh()->status, $bill->balance, $bill->expense_category_id]);
+    }
+
+    public function test_the_bills_screen_says_under_its_name_how_much_is_still_owed(): void
+    {
+        $this->bill(10000);
+        $this->bill(5000);
+
+        Livewire::test(ManageVendorBills::class)
+            ->assertSee('2 '.Str::lower(VendorBillResource::getPluralModelLabel()))
+            ->assertSee('2 unpaid · '.FeeService::money(15000));
     }
 
     public function test_a_payment_above_the_balance_is_refused_on_the_screen(): void

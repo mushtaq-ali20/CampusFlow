@@ -18,6 +18,8 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -113,34 +115,40 @@ class MarksEntry extends Page
     {
         return $schema
             ->components([
-                Select::make('exam')
-                    ->label(__('Exam'))
-                    ->options(ExamType::class)
-                    ->helperText(__('Students are promoted by passing the Annual exam.'))
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn () => $this->loadRows()),
-                Select::make('section_id')
-                    ->label(__('Section'))
-                    ->options(fn (): array => $this->sections()
-                        ->with(['schoolClass', 'campus'])
-                        ->get()
-                        ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
-                        ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
-                        ->all())
-                    ->searchable()
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(function (): void {
-                        $this->data['subject_id'] = null;
-                        $this->loadRows();
-                    }),
-                Select::make('subject_id')
-                    ->label(__('Subject'))
-                    ->options(fn (): array => $this->subjectOptions())
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn () => $this->loadRows()),
+                Grid::make()->schema([
+                    Select::make('exam')
+                        ->label(__('Exam'))
+                        ->options(ExamType::class)
+                        ->helperText(__('Students are promoted by passing the Annual exam.'))
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn () => $this->loadRows()),
+                    Select::make('section_id')
+                        ->label(__('Section'))
+                        ->options(fn (): array => $this->sections()
+                            ->with(['schoolClass', 'campus'])
+                            ->get()
+                            ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
+                            ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
+                            ->all())
+                        ->searchable()
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function (): void {
+                            $this->data['subject_id'] = null;
+                            $this->loadRows();
+                        }),
+                    Select::make('subject_id')
+                        ->label(__('Subject'))
+                        ->options(fn (): array => $this->subjectOptions())
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn () => $this->loadRows()),
+                ])->extraAttributes(['class' => 'cf-filter-bar'])->columnSpanFull(),
+                View::make('filament.components.pick-first')
+                    ->viewData(['heading' => __('Pick a section and a subject'), 'description' => __('The class list opens here with a marks box for each student.')])
+                    ->columnSpanFull()
+                    ->visible(fn (): bool => blank($this->data['section_id'] ?? null) || blank($this->data['subject_id'] ?? null)),
                 Repeater::make('rows')
                     ->label(fn (): string => __('Students').$this->totalMarksLabel())
                     ->schema([

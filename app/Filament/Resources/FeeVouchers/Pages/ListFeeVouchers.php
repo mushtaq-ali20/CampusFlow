@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\FeeVouchers\Pages;
 
+use App\Enums\VoucherStatus;
 use App\Filament\Resources\FeeVouchers\FeeVoucherResource;
 use App\Filament\Resources\Sections\SectionResource;
 use App\Models\Section;
@@ -14,10 +15,30 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ListFeeVouchers extends ListRecords
 {
     protected static string $resource = FeeVoucherResource::class;
+
+    /**
+     * The pills under the screen's name: what is still owed on the vouchers the table shows, and how many are part paid.
+     *
+     * @return list<array{label: string, tone: string}>
+     */
+    public function getHeaderStats(): array
+    {
+        $query = $this->getFilteredTableQuery()->reorder();
+        $status = $query->getModel()->qualifyColumn('status');
+
+        $open = (clone $query)->whereIn($status, [VoucherStatus::Unpaid, VoucherStatus::Partial]);
+        $owed = (int) (clone $open)->sum(DB::raw($query->getModel()->qualifyColumn('net_amount').' - '.$query->getModel()->qualifyColumn('paid_amount')));
+
+        return [
+            ['label' => __(':count unpaid · :amount', ['count' => number_format((clone $open)->count()), 'amount' => FeeService::money($owed)]), 'tone' => 'danger'],
+            ['label' => __(':count partly paid', ['count' => number_format((clone $query)->where($status, VoucherStatus::Partial)->count())]), 'tone' => 'warning'],
+        ];
+    }
 
     protected function getHeaderActions(): array
     {

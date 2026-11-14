@@ -24,6 +24,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section as FormSection;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -71,37 +72,50 @@ class TeacherResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('firstname')
-                    ->label(__('First name'))
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('lastname')
-                    ->label(__('Last name'))
-                    ->required()
-                    ->maxLength(255),
-                TextInput::make('email')
-                    ->label(__('Email'))
-                    ->email()
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(User::class, 'email', ignorable: fn (?Teacher $record): ?User => $record?->user),
-                TextInput::make('max_week_hours')
-                    ->label(__('Max weekly hours'))
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(168)
-                    ->step(0.01)
-                    ->nullable(),
-                DatePicker::make('hired_at')
-                    ->label(__('Hire Date'))
-                    ->nullable(),
-                Select::make('campuses')
-                    ->label(__('Branches'))
-                    ->helperText(__('Branches are also added when the teacher is assigned to a section.'))
-                    ->relationship('campuses', 'name')
-                    ->getOptionLabelFromRecordUsing(fn (Campus $record): string => $record->name)
-                    ->multiple()
-                    ->preload(),
+                FormSection::make(__('Personal details'))
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->columnSpanFull()
+                    ->schema([
+                        TextInput::make('firstname')
+                            ->label(__('First name'))
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('lastname')
+                            ->label(__('Last name'))
+                            ->required()
+                            ->maxLength(255),
+                        TextInput::make('email')
+                            ->label(__('Email'))
+                            ->email()
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(User::class, 'email', ignorable: fn (?Teacher $record): ?User => $record?->user)
+                            ->columnSpanFull(),
+                    ]),
+
+                FormSection::make(__('Work'))
+                    ->description(__('Branches are also added when the teacher is assigned to a section.'))
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->columnSpanFull()
+                    ->schema([
+                        DatePicker::make('hired_at')
+                            ->label(__('Hire Date'))
+                            ->nullable(),
+                        TextInput::make('max_week_hours')
+                            ->label(__('Max weekly hours'))
+                            ->numeric()
+                            ->minValue(0)
+                            ->maxValue(168)
+                            ->step(0.01)
+                            ->nullable(),
+                        Select::make('campuses')
+                            ->label(__('Branches'))
+                            ->relationship('campuses', 'name')
+                            ->getOptionLabelFromRecordUsing(fn (Campus $record): string => $record->name)
+                            ->multiple()
+                            ->preload()
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 

@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Models\Year;
 use BackedEnum;
 use Carbon\Carbon;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -27,13 +28,15 @@ use Filament\Actions\ExportAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -92,7 +95,7 @@ class StudentResource extends Resource
                             ->label(__('Email')),
                         TextEntry::make('idnumber')
                             ->label(__('ID Number'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('user.birthdate')
                             ->label(__('Birthdate'))
                             ->date(),
@@ -100,17 +103,17 @@ class StudentResource extends Resource
                             ->label(__('Age')),
                         TextEntry::make('formatted_gender')
                             ->label(__('Gender'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('phone.phone_number')
                             ->label(__('Phone'))
                             ->badge()
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('profession.name')
                             ->label(__('Profession'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('institution.name')
                             ->label(__('Institution'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                     ]),
                 Section::make(__('Address'))
                     ->columns(2)
@@ -118,133 +121,182 @@ class StudentResource extends Resource
                     ->schema([
                         TextEntry::make('address')
                             ->label(__('Address'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('city')
                             ->label(__('City'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('zip_code')
                             ->label(__('zip'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('state')
                             ->label(__('State'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                         TextEntry::make('country')
                             ->label(__('Country'))
-                            ->placeholder('-'),
+                            ->placeholder(__('Not added')),
                     ]),
             ]);
     }
 
+    /**
+     * The student's details in cards: personal details, background and phone numbers, with the profile picture
+     * beside them on a wide screen; the address (and the banking details when the school collects them) on their
+     * own tabs.
+     */
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 Tabs::make('Student')
+                    ->contained(false)
                     ->columnSpanFull()
                     ->tabs([
                         Tab::make(__('Student Info'))
                             ->schema([
-                                TextInput::make('firstname')
-                                    ->label(__('First name'))
-                                    ->required()
-                                    ->maxLength(30),
-                                TextInput::make('lastname')
-                                    ->label(__('Last name'))
-                                    ->required()
-                                    ->maxLength(30),
-                                TextInput::make('email')
-                                    ->label(__('Email'))
-                                    ->email()
-                                    ->nullable()
-                                    ->maxLength(60)
-                                    ->unique(User::class, 'email', ignorable: fn (?Student $record): ?User => $record?->user),
-                                TextInput::make('idnumber')
-                                    ->label(__('ID Number'))
-                                    ->nullable(),
-                                DatePicker::make('birthdate')
-                                    ->label(__('Birthdate'))
-                                    ->maxDate(today())
-                                    ->nullable(),
-                                Radio::make('gender_id')
-                                    ->label(__('Gender'))
-                                    ->options([
-                                        0 => __('Other'),
-                                        1 => __('Female'),
-                                        2 => __('Male'),
-                                    ])
-                                    ->required()
-                                    ->default(0)
-                                    ->inline(),
-                                SpatieMediaLibraryFileUpload::make('profile_picture')
-                                    ->label(__('Profile Picture'))
-                                    ->collection('profile-picture')
-                                    ->conversion('thumb')
-                                    ->image()
-                                    ->nullable(),
-                                Select::make('profession_id')
-                                    ->label(__('Profession'))
-                                    ->relationship('profession', 'name')
-                                    ->preload()
-                                    ->searchable()
-                                    ->createOptionForm([
-                                        TextInput::make('name')->required(),
-                                    ])
-                                    ->nullable(),
-                                Select::make('institution_id')
-                                    ->label(__('Institution'))
-                                    ->relationship('institution', 'name')
-                                    ->preload()
-                                    ->searchable()
-                                    ->createOptionForm([
-                                        TextInput::make('name')->required(),
-                                    ])
-                                    ->nullable(),
-                                Repeater::make('phone')
-                                    ->relationship()
-                                    ->label(__('Phone numbers'))
+                                Grid::make(['default' => 1, 'lg' => 3])
                                     ->schema([
-                                        TextInput::make('phone_number')
-                                            ->label(__('Phone number'))
-                                            ->required(),
-                                    ])
-                                    ->defaultItems(0)
-                                    ->reorderable(false),
+                                        Group::make([
+                                            Section::make(__('Personal details'))
+                                                ->description(__('The name as it prints on vouchers and result cards.'))
+                                                ->columns(['default' => 1, 'md' => 2])
+                                                ->schema([
+                                                    TextInput::make('firstname')
+                                                        ->label(__('First name'))
+                                                        ->required()
+                                                        ->maxLength(30),
+                                                    TextInput::make('lastname')
+                                                        ->label(__('Last name'))
+                                                        ->required()
+                                                        ->maxLength(30),
+                                                    DatePicker::make('birthdate')
+                                                        ->label(__('Birthdate'))
+                                                        ->maxDate(today())
+                                                        ->nullable(),
+                                                    ToggleButtons::make('gender_id')
+                                                        ->label(__('Gender'))
+                                                        ->options([
+                                                            0 => __('Other'),
+                                                            1 => __('Female'),
+                                                            2 => __('Male'),
+                                                        ])
+                                                        ->required()
+                                                        ->default(0)
+                                                        ->grouped(),
+                                                    TextInput::make('idnumber')
+                                                        ->label(__('ID Number'))
+                                                        ->placeholder(__('B-form or CNIC number'))
+                                                        ->nullable(),
+                                                    TextInput::make('email')
+                                                        ->label(__('Email'))
+                                                        ->email()
+                                                        ->nullable()
+                                                        ->maxLength(60)
+                                                        ->unique(User::class, 'email', ignorable: fn (?Student $record): ?User => $record?->user),
+                                                ]),
+
+                                            Section::make(__('Background'))
+                                                ->description(__('Pick from the list, or add a new one with the plus button.'))
+                                                ->columns(['default' => 1, 'md' => 2])
+                                                ->schema([
+                                                    Select::make('profession_id')
+                                                        ->label(__('Profession'))
+                                                        ->relationship('profession', 'name')
+                                                        ->preload()
+                                                        ->searchable()
+                                                        ->createOptionForm([
+                                                            TextInput::make('name')->required(),
+                                                        ])
+                                                        ->nullable(),
+                                                    Select::make('institution_id')
+                                                        ->label(__('Institution'))
+                                                        ->relationship('institution', 'name')
+                                                        ->preload()
+                                                        ->searchable()
+                                                        ->createOptionForm([
+                                                            TextInput::make('name')->required(),
+                                                        ])
+                                                        ->nullable(),
+                                                ]),
+
+                                            Section::make(__('Phone numbers'))
+                                                ->description(__('Used for fee reminders and messages to parents.'))
+                                                ->schema([
+                                                    Repeater::make('phone')
+                                                        ->relationship()
+                                                        ->label(__('Phone numbers'))
+                                                        ->hiddenLabel()
+                                                        ->simple(
+                                                            TextInput::make('phone_number')
+                                                                ->label(__('Phone number'))
+                                                                ->placeholder(__('Phone number'))
+                                                                ->tel()
+                                                                ->required(),
+                                                        )
+                                                        ->addActionLabel(__('Add phone number'))
+                                                        ->defaultItems(0)
+                                                        ->reorderable(false),
+                                                ]),
+                                        ])->columnSpan(['lg' => 2]),
+
+                                        Section::make(__('Profile picture'))
+                                            ->schema([
+                                                SpatieMediaLibraryFileUpload::make('profile_picture')
+                                                    ->label(__('Profile Picture'))
+                                                    ->hiddenLabel()
+                                                    ->collection('profile-picture')
+                                                    ->conversion('thumb')
+                                                    ->image()
+                                                    ->avatar()
+                                                    ->alignCenter()
+                                                    ->nullable(),
+                                            ])
+                                            ->columnSpan(1),
+                                    ]),
                             ]),
 
                         Tab::make(__('Address'))
                             ->schema([
-                                TextInput::make('address')
-                                    ->label(__('Address'))
-                                    ->nullable()
-                                    ->maxLength(60),
-                                TextInput::make('zip_code')
-                                    ->label(__('zip'))
-                                    ->nullable()
-                                    ->maxLength(10),
-                                TextInput::make('city')
-                                    ->label(__('City'))
-                                    ->nullable()
-                                    ->maxLength(30),
-                                TextInput::make('state')
-                                    ->label(__('State'))
-                                    ->nullable()
-                                    ->maxLength(30),
-                                TextInput::make('country')
-                                    ->label(__('Country'))
-                                    ->nullable()
-                                    ->maxLength(20),
+                                Section::make(__('Home address'))
+                                    ->columns(['default' => 1, 'md' => 2])
+                                    ->schema([
+                                        TextInput::make('address')
+                                            ->label(__('Address'))
+                                            ->nullable()
+                                            ->maxLength(60)
+                                            ->columnSpanFull(),
+                                        TextInput::make('city')
+                                            ->label(__('City'))
+                                            ->nullable()
+                                            ->maxLength(30),
+                                        TextInput::make('state')
+                                            ->label(__('State'))
+                                            ->nullable()
+                                            ->maxLength(30),
+                                        TextInput::make('zip_code')
+                                            ->label(__('zip'))
+                                            ->nullable()
+                                            ->maxLength(10),
+                                        TextInput::make('country')
+                                            ->label(__('Country'))
+                                            ->nullable()
+                                            ->maxLength(20),
+                                    ]),
                             ]),
 
                         Tab::make(__('Invoicing Info'))
                             ->schema([
-                                TextInput::make('iban')
-                                    ->label(__('IBAN'))
-                                    ->nullable()
-                                    ->maxLength(90),
-                                TextInput::make('bic')
-                                    ->label(__('BIC'))
-                                    ->nullable()
-                                    ->maxLength(30),
+                                Section::make(__('Banking details'))
+                                    ->columns(['default' => 1, 'md' => 2])
+                                    ->schema([
+                                        TextInput::make('iban')
+                                            ->label(__('IBAN'))
+                                            ->nullable()
+                                            ->maxLength(90),
+                                        TextInput::make('bic')
+                                            ->label(__('BIC'))
+                                            ->nullable()
+                                            ->maxLength(30),
+                                    ]),
                             ])
                             ->visible(fn (): bool => (bool) config('settings.collect_student_banking_info')),
                     ]),
@@ -394,14 +446,14 @@ class StudentResource extends Resource
             ])
             ->defaultSort('id', 'desc')
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-            ])
-            ->headerActions([
-                ExportAction::make()
-                    ->exporter(StudentExporter::class),
+                ViewAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
+                ExportAction::make()
+                    ->exporter(StudentExporter::class),
                 BulkActionGroup::make([
                     ExportBulkAction::make()
                         ->exporter(StudentExporter::class),

@@ -12,6 +12,7 @@ use App\Models\Campus;
 use App\Models\JobOpening;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -119,9 +120,13 @@ class JobOpeningResource extends Resource
                 Action::make('applicants')
                     ->label(__('Applicants'))
                     ->icon(Heroicon::OutlinedUsers)
+                    ->button()
+                    ->color('gray')
                     ->url(fn (JobOpening $record): string => JobApplicantResource::getUrl('index', ['tableFilters' => ['job_opening_id' => ['value' => $record->id]]])),
-                EditAction::make(),
-                DeleteAction::make()->visible(fn (JobOpening $record): bool => $record->applicants_count === 0),
+                ActionGroup::make([
+                    EditAction::make(),
+                    DeleteAction::make()->visible(fn (JobOpening $record): bool => $record->applicants_count === 0),
+                ]),
             ]);
     }
 

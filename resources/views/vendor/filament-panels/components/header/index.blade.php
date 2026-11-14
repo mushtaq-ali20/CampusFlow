@@ -48,6 +48,10 @@
 
         {{ FilamentView::renderHook(PanelsRenderHook::PAGE_HEADER_HEADING_AFTER, scopes: $this->getRenderHookScopes()) }}
 
+        @if ($isPanelPage && filled($heading))
+            @include('filament.components.page-summary', ['page' => $this])
+        @endif
+
         @if (filled($subheading))
             <p class="fi-header-subheading">
                 {{ $subheading }}
@@ -63,7 +67,7 @@
         <div class="cf-header-title">
             @if ($trailIcon && filled($heading))
                 <span class="cf-header-icon" aria-hidden="true">
-                    {{ \Filament\Support\generate_icon_html($trailIcon, size: \Filament\Support\Enums\IconSize::Large) }}
+                    {{ \Filament\Support\generate_icon_html($trailIcon, size: \Filament\Support\Enums\IconSize::Medium) }}
                 </span>
             @endif
 

@@ -6,6 +6,7 @@ use App\Filament\Concerns\AuthorizesWritesWithPermissions;
 use App\Filament\Resources\ExpenseCategories\Pages\ManageExpenseCategories;
 use App\Models\ExpenseCategory;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -73,8 +74,10 @@ class ExpenseCategoryResource extends Resource
                 IconColumn::make('is_active')->label(__('In use'))->boolean(),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    DeleteAction::make(),
+                ]),
             ]);
     }
 

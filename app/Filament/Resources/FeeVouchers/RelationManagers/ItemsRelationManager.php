@@ -42,7 +42,8 @@ class ItemsRelationManager extends RelationManager
                     }),
                 TextColumn::make('amount')
                     ->label(__('Amount'))
-                    ->formatStateUsing(fn (int $state, $record): string => ($record->kind->value === 'discount' ? '- ' : '').FeeService::money($state)),
+                    ->formatStateUsing(fn (int $state, $record): string => ($record->kind->value === 'discount' ? '- ' : '').FeeService::money($state))
+                    ->alignEnd(),
             ]);
     }
 }

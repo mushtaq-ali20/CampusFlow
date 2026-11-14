@@ -8,8 +8,10 @@ use App\Enums\VoucherItemKind;
 use App\Enums\VoucherStatus;
 use App\Filament\Resources\FeeAdjustments\FeeAdjustmentResource;
 use App\Filament\Resources\FeeAdjustments\Pages\ListFeeAdjustments;
+use App\Filament\Resources\FeePayments\Pages\ListFeePayments;
 use App\Filament\Resources\FeeRefunds\FeeRefundResource;
 use App\Filament\Resources\FeeRefunds\Pages\ListFeeRefunds;
+use App\Filament\Resources\FeeVouchers\Pages\ListFeeVouchers;
 use App\Filament\Resources\FeeVouchers\Pages\ViewFeeVoucher;
 use App\Filament\Resources\FeeVouchers\RelationManagers\PaymentsRelationManager;
 use App\Models\Admission;
@@ -81,6 +83,22 @@ class FeeAccountTest extends TestCase
     private function pay(FeeVoucher $voucher, int $amount, string $on = '2026-11-11'): FeePayment
     {
         return $this->fees->recordPayment($voucher, $amount, PaymentMethod::Cash, Carbon::parse($on));
+    }
+
+    public function test_the_voucher_and_receipt_screens_say_under_their_name_what_is_owed_and_received(): void
+    {
+        $this->actingAsRole('admin');
+        $this->voucher(3000);
+        $this->pay($this->voucher(2000), 500);
+        $this->pay($this->voucher(1000), 1000, '2026-10-05');
+
+        Livewire::test(ListFeeVouchers::class)
+            ->assertSee('2 unpaid · '.FeeService::money(4500))
+            ->assertSee('1 partly paid');
+
+        Livewire::test(ListFeePayments::class)
+            ->assertSee(FeeService::money(1500).' received')
+            ->assertSee(FeeService::money(500).' this month');
     }
 
     public function test_the_balance_is_split_into_installments_and_the_voucher_is_due_at_the_last_one(): void

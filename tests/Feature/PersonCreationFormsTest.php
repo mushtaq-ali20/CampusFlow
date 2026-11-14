@@ -55,6 +55,20 @@ class PersonCreationFormsTest extends TestCase
         $this->assertEquals(2, Student::whereHas('user', fn ($query) => $query->where('lastname', 'Doe'))->count());
     }
 
+    public function test_the_phone_numbers_of_a_new_student_are_saved(): void
+    {
+        app(Settings::class)->set(['current_period' => Period::factory()->create()->id]);
+
+        Livewire::test(CreateStudent::class)
+            ->fillForm(['firstname' => 'Jane', 'lastname' => 'Doe', 'gender_id' => 1, 'phone' => [['phone_number' => '0300-1234567'], ['phone_number' => '0321-7654321']]])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $student = Student::whereHas('user', fn ($query) => $query->where('lastname', 'Doe'))->firstOrFail();
+
+        $this->assertEqualsCanonicalizing(['0300-1234567', '0321-7654321'], $student->phone()->pluck('phone_number')->all());
+    }
+
     public function test_teacher_email_must_not_belong_to_another_user(): void
     {
         User::factory()->create(['email' => 'jane@example.com']);
