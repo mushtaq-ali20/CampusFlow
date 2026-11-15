@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Complaints\Pages;
 
 use App\Filament\Actions\SendWhatsAppAction;
+use App\Filament\Concerns\ShowsRecordHeader;
 use App\Filament\Resources\Complaints\ComplaintResource;
 use App\Models\Complaint;
 use App\Models\Student;
@@ -25,7 +26,20 @@ use Illuminate\Contracts\Support\Htmlable;
  */
 class ViewComplaint extends ViewRecord
 {
+    use ShowsRecordHeader;
+
     protected static string $resource = ComplaintResource::class;
+
+    protected function recordHeader(): array
+    {
+        $complaint = $this->complaint();
+
+        return [
+            'title' => $complaint->subject,
+            'subtitle' => collect([$complaint->complaint_number, $complaint->category?->name, $complaint->campus?->name])->filter()->implode(' · '),
+            'badge' => ['label' => $complaint->status->getLabel(), 'color' => $complaint->status->getColor()],
+        ];
+    }
 
     public function getTitle(): string|Htmlable
     {

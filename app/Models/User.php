@@ -64,6 +64,16 @@ class User extends Authenticatable implements FilamentUser
 
     protected $hidden = ['password', 'remember_token'];
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'dashboard_layout' => 'array',
+        ];
+    }
+
     protected $dispatchesEvents = [
         'deleting' => UserDeleting::class,
     ];

@@ -103,7 +103,7 @@ class FeeHeadResource extends Resource
                     ->boolean(),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->button()->color('gray'),
             ]);
     }
 

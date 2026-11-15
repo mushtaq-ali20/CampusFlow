@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\ActiveBranch;
 use App\Services\CourseEventScheduler;
 use App\Services\Settings;
+use Filament\Pages\BasePage;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
 use Illuminate\Auth\Events\Login;
@@ -47,6 +48,9 @@ class AppServiceProvider extends ServiceProvider
         // Every sign-in starts on all branches
         Event::listen(Login::class, fn (): mixed => app(ActiveBranch::class)->reset());
 
+        // Every sign-in starts with the sidebar groups closed (see sidebar-open-active-group.blade.php)
+        Event::listen(Login::class, fn (): mixed => session()->put('sidebar.collapse_groups', true));
+
         // The Users screen shows when each person last signed in
         Event::listen(Login::class, function (Login $event): void {
             if ($event->user instanceof User) {
@@ -57,8 +61,11 @@ class AppServiceProvider extends ServiceProvider
         // Used by the registration, the student account and Filament's password reset
         Password::defaults(fn (): Password => Password::min(8));
 
+        // The save and cancel buttons of every form stay at the bottom of the screen while it scrolls
+        BasePage::stickyFormActions();
+
         Table::configureUsing(function (Table $table): Table {
-            return $table->recordActionsPosition(RecordActionsPosition::BeforeCells);
+            return $table->recordActionsPosition(RecordActionsPosition::AfterCells);
         });
     }
 

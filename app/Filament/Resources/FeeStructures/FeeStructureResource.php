@@ -123,6 +123,7 @@ class FeeStructureResource extends Resource
                 TextColumn::make('amount')
                     ->label(__('Amount'))
                     ->money(config('campusflow.currency_code', 'PKR'), locale: 'en')
+                    ->alignEnd()
                     ->sortable(),
                 TextColumn::make('campus.name')
                     ->label(__('Branch'))

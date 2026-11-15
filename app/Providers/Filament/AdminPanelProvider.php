@@ -39,7 +39,6 @@ use App\Filament\Resources\VendorBills\VendorBillResource;
 use App\Http\Middleware\EnsurePasswordIsChanged;
 use App\Http\Middleware\NeedsTenant;
 use App\Http\Middleware\SetLocale;
-use App\Services\ActiveBranch;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -113,6 +112,32 @@ class AdminPanelProvider extends PanelProvider
         return asset($path).'?v='.(@filemtime(public_path($path)) ?: '1');
     }
 
+    /**
+     * Tailwind's emerald moved one shade darker from 400 up, so that shade 600 (solid buttons, the open screen in the
+     * menu) is #047857: Filament gives a button white text only when its 600 shade passes the 4.5:1 contrast check,
+     * which emerald-600 does not. The 50 and 100 tints stay as they are.
+     *
+     * @return array<int, string>
+     */
+    public static function accentPalette(): array
+    {
+        $emerald = Color::Emerald;
+
+        return [
+            50 => $emerald[50],
+            100 => $emerald[100],
+            200 => $emerald[200],
+            300 => $emerald[300],
+            400 => $emerald[500],
+            500 => 'oklch(0.54 0.128 164.4)',
+            600 => $emerald[700],
+            700 => $emerald[800],
+            800 => $emerald[900],
+            900 => $emerald[950],
+            950 => 'oklch(0.2 0.04 173)',
+        ];
+    }
+
     public function panel(Panel $panel): Panel
     {
         return $panel
@@ -122,7 +147,8 @@ class AdminPanelProvider extends PanelProvider
             ->login(Login::class)
             ->passwordReset()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => self::accentPalette(),
+                'gray' => Color::Gray,
             ])
             ->brandLogo(fn (): string => config('campusflow.logo') ? Storage::disk('public')->url(config('campusflow.logo')) : self::brandAsset('campusflow-logo.svg'))
             ->darkModeBrandLogo(fn (): string => config('campusflow.logo') ? Storage::disk('public')->url(config('campusflow.logo')) : self::brandAsset('campusflow-logo-dark.svg'))
@@ -166,11 +192,6 @@ class AdminPanelProvider extends PanelProvider
             ->renderHook(
                 PanelsRenderHook::GLOBAL_SEARCH_AFTER,
                 fn (): string => auth()->check() ? Blade::render('@livewire(\App\Livewire\BranchSwitcher::class)') : '',
-            )
-            ->renderHook(
-                PanelsRenderHook::PAGE_HEADER_HEADING_AFTER,
-                fn (): string => view('filament.components.active-branch-note', ['branch' => app(ActiveBranch::class)->campus()])->render(),
-                scopes: self::BRANCH_FILTERED_SCREENS,
             )
             ->renderHook(
                 PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,

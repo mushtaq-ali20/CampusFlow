@@ -11,6 +11,7 @@ use App\Services\FeeService;
 use App\Services\ReceiptService;
 use BackedEnum;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -95,6 +96,7 @@ class FeePaymentResource extends Resource
                 TextColumn::make('amount')
                     ->label(__('Amount'))
                     ->formatStateUsing(fn (int $state): string => FeeService::money($state))
+                    ->alignEnd()
                     ->sortable(),
                 TextColumn::make('method')
                     ->label(__('Payment method'))
@@ -120,8 +122,12 @@ class FeePaymentResource extends Resource
                 Action::make('downloadReceipt')
                     ->label(__('Receipt'))
                     ->icon(Heroicon::OutlinedPrinter)
+                    ->button()
+                    ->color('gray')
                     ->action(fn (FeePayment $record) => app(ReceiptService::class)->download($record)),
-                RequestRefundAction::make(),
+                ActionGroup::make([
+                    RequestRefundAction::make(),
+                ]),
             ]);
     }
 

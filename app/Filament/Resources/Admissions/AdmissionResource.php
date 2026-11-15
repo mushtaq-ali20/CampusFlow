@@ -19,12 +19,14 @@ use App\Services\PromotionService;
 use BackedEnum;
 use DomainException;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section as FormSection;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -128,56 +130,92 @@ class AdmissionResource extends Resource
     {
         return $schema
             ->components([
-                Select::make('student_id')
-                    ->label(__('Student'))
-                    ->searchable()
-                    ->getSearchResultsUsing(fn (string $search): array => static::searchStudents($search))
-                    ->getOptionLabelUsing(fn (int|string|null $value): ?string => Student::query()->find($value)?->name)
-                    ->required()
-                    ->disabledOn('edit')
-                    ->unique(
-                        ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule->where('year_id', $get('year_id')),
-                    )
-                    ->validationMessages([
-                        'unique' => __('This student is already admitted in this academic year.'),
-                    ]),
-                Select::make('campus_id')
-                    ->label(__('Branch'))
-                    ->options(fn (): array => SectionResource::branchOptions())
-                    ->default(fn (): ?int => auth()->user()?->activeBranchId())
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
-                Select::make('school_class_id')
-                    ->label(__('Class'))
-                    ->options(fn (): array => SchoolClass::query()->ordered()->pluck('name', 'id')->all())
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
-                Select::make('year_id')
-                    ->label(__('Academic Year'))
-                    ->options(fn (): array => Year::query()->latest('id')->pluck('name', 'id')->all())
-                    ->default(fn (): ?int => Year::current()?->id)
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
-                Select::make('section_id')
-                    ->label(__('Section'))
-                    ->options(fn (Get $get): array => static::sectionOptions($get))
-                    ->required()
-                    ->helperText(__('Choose the branch, class and academic year first.')),
-                DatePicker::make('admitted_on')
-                    ->label(__('Admission date'))
-                    ->default(now())
-                    ->required(),
-                Select::make('status')
-                    ->label(__('Status'))
-                    ->options(AdmissionStatus::class)
-                    ->default(AdmissionStatus::Active)
-                    ->required()
-                    ->visibleOn('edit'),
+                FormSection::make(__('Student'))
+                    ->columnSpanFull()
+                    ->schema([static::studentField()]),
+
+                FormSection::make(__('Placement'))
+                    ->description(__('Choose the branch, class and academic year first, then the section.'))
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->columnSpanFull()
+                    ->schema(static::placementFields()),
+
+                FormSection::make(__('Admission'))
+                    ->columns(['default' => 1, 'md' => 2])
+                    ->columnSpanFull()
+                    ->schema(static::admissionFields()),
             ]);
+    }
+
+    private static function studentField(): Select
+    {
+        return Select::make('student_id')
+            ->label(__('Student'))
+            ->searchable()
+            ->getSearchResultsUsing(fn (string $search): array => static::searchStudents($search))
+            ->getOptionLabelUsing(fn (int|string|null $value): ?string => Student::query()->find($value)?->name)
+            ->required()
+            ->disabledOn('edit')
+            ->unique(
+                ignoreRecord: true,
+                modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule->where('year_id', $get('year_id')),
+            )
+            ->validationMessages([
+                'unique' => __('This student is already admitted in this academic year.'),
+            ]);
+    }
+
+    /**
+     * @return list<Select>
+     */
+    private static function placementFields(): array
+    {
+        return [
+            Select::make('campus_id')
+                ->label(__('Branch'))
+                ->options(fn (): array => SectionResource::branchOptions())
+                ->default(fn (): ?int => auth()->user()?->activeBranchId())
+                ->required()
+                ->live()
+                ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
+            Select::make('school_class_id')
+                ->label(__('Class'))
+                ->options(fn (): array => SchoolClass::query()->ordered()->pluck('name', 'id')->all())
+                ->required()
+                ->live()
+                ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
+            Select::make('year_id')
+                ->label(__('Academic Year'))
+                ->options(fn (): array => Year::query()->latest('id')->pluck('name', 'id')->all())
+                ->default(fn (): ?int => Year::current()?->id)
+                ->required()
+                ->live()
+                ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
+            Select::make('section_id')
+                ->label(__('Section'))
+                ->options(fn (Get $get): array => static::sectionOptions($get))
+                ->required()
+                ->helperText(__('Choose the branch, class and academic year first.')),
+        ];
+    }
+
+    /**
+     * @return list<DatePicker|Select>
+     */
+    private static function admissionFields(): array
+    {
+        return [
+            DatePicker::make('admitted_on')
+                ->label(__('Admission date'))
+                ->default(now())
+                ->required(),
+            Select::make('status')
+                ->label(__('Status'))
+                ->options(AdmissionStatus::class)
+                ->default(AdmissionStatus::Active)
+                ->required()
+                ->visibleOn('edit'),
+        ];
     }
 
     public static function table(Table $table): Table
@@ -195,10 +233,9 @@ class AdmissionResource extends Resource
                     ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereHas('student.user', fn (Builder $users) => $users
                         ->where('firstname', 'like', "%{$search}%")
                         ->orWhere('lastname', 'like', "%{$search}%"))),
-                TextColumn::make('schoolClass.name')
-                    ->label(__('Class')),
-                TextColumn::make('section.name')
-                    ->label(__('Section')),
+                TextColumn::make('section.full_name')
+                    ->label(__('Class / Section'))
+                    ->state(fn (Admission $record): ?string => $record->section?->full_name ?? $record->schoolClass?->name),
                 TextColumn::make('campus.name')
                     ->label(__('Branch')),
                 TextColumn::make('year.name')
@@ -244,15 +281,17 @@ class AdmissionResource extends Resource
                     ->default(AdmissionStatus::Active->value),
             ])
             ->recordActions([
-                EditAction::make(),
-                static::promoteAction(),
-                Action::make('markLeft')
-                    ->label(__('Mark as left'))
-                    ->icon(Heroicon::OutlinedArrowRightStartOnRectangle)
-                    ->color('gray')
-                    ->requiresConfirmation()
-                    ->visible(fn (Admission $record): bool => $record->status === AdmissionStatus::Active && static::canEdit($record))
-                    ->action(fn (Admission $record) => $record->update(['status' => AdmissionStatus::Left])),
+                EditAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    static::promoteAction(),
+                    Action::make('markLeft')
+                        ->label(__('Mark as left'))
+                        ->icon(Heroicon::OutlinedArrowRightStartOnRectangle)
+                        ->color('gray')
+                        ->requiresConfirmation()
+                        ->visible(fn (Admission $record): bool => $record->status === AdmissionStatus::Active && static::canEdit($record))
+                        ->action(fn (Admission $record) => $record->update(['status' => AdmissionStatus::Left])),
+                ]),
             ])
             ->toolbarActions([
                 static::bulkPromoteAction(),

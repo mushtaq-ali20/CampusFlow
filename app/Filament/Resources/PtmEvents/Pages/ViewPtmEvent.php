@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PtmEvents\Pages;
 
+use App\Filament\Concerns\ShowsRecordHeader;
 use App\Filament\Resources\PtmEvents\PtmEventResource;
 use App\Models\PtmEvent;
 use Filament\Actions\EditAction;
@@ -17,7 +18,21 @@ use Illuminate\Support\Carbon;
  */
 class ViewPtmEvent extends ViewRecord
 {
+    use ShowsRecordHeader;
+
     protected static string $resource = PtmEventResource::class;
+
+    protected function recordHeader(): array
+    {
+        /** @var PtmEvent $event */
+        $event = $this->getRecord();
+
+        return [
+            'title' => $event->title,
+            'subtitle' => $event->date->translatedFormat('l d F Y').' · '.$event->campus?->name,
+            'badge' => null,
+        ];
+    }
 
     public function getTitle(): string|Htmlable
     {

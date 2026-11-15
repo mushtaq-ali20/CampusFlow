@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PayrollRuns\Pages;
 
 use App\Enums\PaymentMethod;
+use App\Filament\Concerns\ShowsRecordHeader;
 use App\Filament\Resources\PayrollRuns\PayrollRunResource;
 use App\Models\PayrollRun;
 use App\Services\PayrollService;
@@ -18,7 +19,20 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ViewPayrollRun extends ViewRecord
 {
+    use ShowsRecordHeader;
+
     protected static string $resource = PayrollRunResource::class;
+
+    protected function recordHeader(): array
+    {
+        $run = $this->run();
+
+        return [
+            'title' => __('Payroll :month', ['month' => $run->monthLabel()]),
+            'subtitle' => collect([$run->campus?->name, trans_choice(':count slip|:count slips', $run->slips()->count())])->filter()->implode(' · '),
+            'badge' => ['label' => $run->status->getLabel(), 'color' => $run->status->getColor()],
+        ];
+    }
 
     protected function run(): PayrollRun
     {

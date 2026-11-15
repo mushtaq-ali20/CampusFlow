@@ -4,6 +4,7 @@ namespace App\Filament\Resources\FeeVouchers\Pages;
 
 use App\Enums\VoucherStatus;
 use App\Filament\Actions\CollectPaymentAction;
+use App\Filament\Concerns\ShowsRecordHeader;
 use App\Filament\Resources\FeeVouchers\FeeVoucherResource;
 use App\Models\FeeVoucher;
 use App\Services\FeeAccountService;
@@ -21,6 +22,20 @@ use Filament\Support\Icons\Heroicon;
 class ViewFeeVoucher extends ViewRecord
 {
     protected static string $resource = FeeVoucherResource::class;
+
+    use ShowsRecordHeader;
+
+    protected function recordHeader(): array
+    {
+        $voucher = $this->voucher();
+        $voucher->loadMissing('admission.student', 'admission.section');
+
+        return [
+            'title' => $voucher->voucher_number,
+            'subtitle' => collect([$voucher->admission?->student?->name, $voucher->admission?->section?->full_name, $voucher->month?->translatedFormat('F Y'), FeeService::money($voucher->balance).' '.__('due')])->filter()->implode(' · '),
+            'badge' => ['label' => $voucher->status->getLabel(), 'color' => $voucher->status->getColor()],
+        ];
+    }
 
     protected function voucher(): FeeVoucher
     {

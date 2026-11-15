@@ -10,6 +10,7 @@ use App\Services\FeeService;
 use BackedEnum;
 use DomainException;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Icons\Heroicon;
@@ -118,14 +119,17 @@ class FeeAdjustmentResource extends Resource
                         }
 
                         Notification::make()->title(__('Adjustment approved'))->success()->send();
-                    }),
-                Action::make('reject')
-                    ->label(__('Reject'))
-                    ->icon(Heroicon::OutlinedXMark)
-                    ->color('gray')
-                    ->visible(fn (FeeAdjustment $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
-                    ->requiresConfirmation()
-                    ->action(fn (FeeAdjustment $record) => app(FeeAccountService::class)->rejectAdjustment($record, auth()->user())),
+                    })
+                    ->button(),
+                ActionGroup::make([
+                    Action::make('reject')
+                        ->label(__('Reject'))
+                        ->icon(Heroicon::OutlinedXMark)
+                        ->color('danger')
+                        ->visible(fn (FeeAdjustment $record): bool => $record->status === RequestStatus::Pending && (auth()->user()?->can('fees.approve') ?? false))
+                        ->requiresConfirmation()
+                        ->action(fn (FeeAdjustment $record) => app(FeeAccountService::class)->rejectAdjustment($record, auth()->user())),
+                ]),
             ]);
     }
 

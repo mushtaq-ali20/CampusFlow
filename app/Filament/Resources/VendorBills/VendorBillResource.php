@@ -15,6 +15,7 @@ use App\Services\PayableService;
 use BackedEnum;
 use DomainException;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -192,21 +193,24 @@ class VendorBillResource extends Resource
                         }
 
                         Notification::make()->title(__('Payment recorded'))->body(__('Payment voucher :number', ['number' => $payment->voucher_number]))->success()->send();
-                    }),
-                Action::make('cancel')
-                    ->label(__('Cancel'))
-                    ->icon(Heroicon::OutlinedXMark)
-                    ->color('danger')
-                    ->visible(fn (VendorBill $record): bool => $record->status === BillStatus::Unpaid && static::manages())
-                    ->requiresConfirmation()
-                    ->modalDescription(__('Use this for a bill entered by mistake. It stays in the list as cancelled.'))
-                    ->action(function (VendorBill $record): void {
-                        try {
-                            app(PayableService::class)->cancel($record);
-                        } catch (DomainException $exception) {
-                            Notification::make()->title($exception->getMessage())->danger()->send();
-                        }
-                    }),
+                    })
+                    ->button(),
+                ActionGroup::make([
+                    Action::make('cancel')
+                        ->label(__('Cancel'))
+                        ->icon(Heroicon::OutlinedXMark)
+                        ->color('danger')
+                        ->visible(fn (VendorBill $record): bool => $record->status === BillStatus::Unpaid && static::manages())
+                        ->requiresConfirmation()
+                        ->modalDescription(__('Use this for a bill entered by mistake. It stays in the list as cancelled.'))
+                        ->action(function (VendorBill $record): void {
+                            try {
+                                app(PayableService::class)->cancel($record);
+                            } catch (DomainException $exception) {
+                                Notification::make()->title($exception->getMessage())->danger()->send();
+                            }
+                        }),
+                ]),
             ]);
     }
 

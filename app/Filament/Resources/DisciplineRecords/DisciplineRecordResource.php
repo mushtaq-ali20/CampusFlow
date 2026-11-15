@@ -15,6 +15,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Year;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
@@ -273,12 +274,14 @@ class DisciplineRecordResource extends Resource
                         ->when($data['until'] ?? null, fn (Builder $query, string $date): Builder => $query->whereDate('date', '<=', $date))),
             ])
             ->recordActions([
-                SendWhatsAppAction::make()
-                    ->student(fn (DisciplineRecord $record): Student => $record->admission->student)
-                    ->message(fn (DisciplineRecord $record): string => static::parentMessage($record))
-                    ->aboutRecord(),
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    SendWhatsAppAction::make()
+                        ->student(fn (DisciplineRecord $record): Student => $record->admission->student)
+                        ->message(fn (DisciplineRecord $record): string => static::parentMessage($record))
+                        ->aboutRecord(),
+                    DeleteAction::make(),
+                ]),
             ]);
     }
 

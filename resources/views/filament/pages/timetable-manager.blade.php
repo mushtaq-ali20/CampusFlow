@@ -9,6 +9,7 @@
         $manage = $this->canManage();
     @endphp
 
+    <div class="cf-filter-card flex flex-col gap-4">
     <div class="flex flex-wrap items-center gap-2">
         <x-filament::button
             :color="$mode === 'section' ? 'primary' : 'gray'"
@@ -27,8 +28,8 @@
     </div>
 
     @if ($mode === 'section')
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-            <label class="block">
+        <div class="flex flex-wrap items-start gap-3">
+            <label class="block min-w-[12rem]">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('Branch') }}</span>
                 <x-filament::input.wrapper>
                     <x-filament::input.select wire:model.live="campusId" :disabled="auth()->user()->campus_id !== null">
@@ -39,7 +40,7 @@
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </label>
-            <label class="block">
+            <label class="block min-w-[12rem]">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('Shift') }}</span>
                 <x-filament::input.wrapper>
                     <x-filament::input.select wire:model.live="shift">
@@ -50,7 +51,7 @@
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </label>
-            <label class="block">
+            <label class="block min-w-[12rem]">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('Class') }}</span>
                 <x-filament::input.wrapper>
                     <x-filament::input.select wire:model.live="classId">
@@ -61,7 +62,7 @@
                     </x-filament::input.select>
                 </x-filament::input.wrapper>
             </label>
-            <label class="block">
+            <label class="block min-w-[12rem]">
                 <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('Section') }}</span>
                 <x-filament::input.wrapper>
                     <x-filament::input.select wire:model.live="sectionId">
@@ -74,7 +75,7 @@
             </label>
         </div>
     @else
-        <label class="block md:w-1/3">
+        <label class="block min-w-[12rem]">
             <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{ __('Teacher') }}</span>
             <x-filament::input.wrapper>
                 <x-filament::input.select wire:model.live="teacherId">
@@ -86,6 +87,7 @@
             </x-filament::input.wrapper>
         </label>
     @endif
+    </div>
 
     @if (($mode === 'section' && $section) || ($mode === 'teacher' && filled($teacherId)))
         <x-filament::section>
@@ -109,7 +111,7 @@
             <div class="overflow-x-auto">
                 <table class="w-full border-collapse text-sm">
                     <thead>
-                        <tr class="bg-gray-100 dark:bg-gray-800">
+                        <tr class="bg-slate-600 text-slate-50 dark:bg-slate-700">
                             <th class="border border-gray-200 p-2 text-left dark:border-gray-700">{{ __('Period') }}</th>
                             @foreach ($days as $day)
                                 <th class="border border-gray-200 p-2 text-left dark:border-gray-700">{{ $day }}</th>

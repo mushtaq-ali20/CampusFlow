@@ -16,6 +16,7 @@ use App\Models\Section;
 use App\Models\Year;
 use App\Services\FeeService;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Infolists\Components\TextEntry;
@@ -127,10 +128,9 @@ class FeeVoucherResource extends Resource
                     ->searchable(query: fn (Builder $query, string $search): Builder => $query->whereHas('admission.student.user', fn (Builder $users) => $users
                         ->where('firstname', 'like', "%{$search}%")
                         ->orWhere('lastname', 'like', "%{$search}%"))),
-                TextColumn::make('schoolClass.name')
-                    ->label(__('Class')),
-                TextColumn::make('section.name')
-                    ->label(__('Section')),
+                TextColumn::make('section.full_name')
+                    ->label(__('Class / Section'))
+                    ->state(fn (FeeVoucher $record): ?string => $record->section?->full_name ?? $record->schoolClass?->name),
                 TextColumn::make('campus.name')
                     ->label(__('Branch')),
                 TextColumn::make('month')
@@ -144,13 +144,16 @@ class FeeVoucherResource extends Resource
                 TextColumn::make('net_amount')
                     ->label(__('Total payable'))
                     ->formatStateUsing(fn (int $state): string => FeeService::money($state))
+                    ->alignEnd()
                     ->sortable(),
                 TextColumn::make('paid_amount')
                     ->label(__('Paid'))
-                    ->formatStateUsing(fn (int $state): string => FeeService::money($state)),
+                    ->formatStateUsing(fn (int $state): string => FeeService::money($state))
+                    ->alignEnd(),
                 TextColumn::make('balance')
                     ->label(__('Balance'))
-                    ->formatStateUsing(fn (int $state): string => FeeService::money($state)),
+                    ->formatStateUsing(fn (int $state): string => FeeService::money($state))
+                    ->alignEnd(),
                 TextColumn::make('status')
                     ->label(__('Status'))
                     ->badge(),
@@ -188,8 +191,10 @@ class FeeVoucherResource extends Resource
                     ->query(fn (Builder $query): Builder => $query->where('status', '!=', VoucherStatus::Paid)->whereDate('due_date', '<', now())),
             ])
             ->recordActions([
-                ViewAction::make(),
-                CollectPaymentAction::make(),
+                CollectPaymentAction::make()->button(),
+                ActionGroup::make([
+                    ViewAction::make(),
+                ]),
             ]);
     }
 

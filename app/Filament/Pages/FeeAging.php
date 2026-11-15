@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -62,19 +63,21 @@ class FeeAging extends Page implements HasTable
     {
         return $schema
             ->components([
-                Select::make('section_id')
-                    ->label(__('Section'))
-                    ->placeholder(__('All sections'))
-                    ->options(fn (): array => Section::query()
-                        ->visibleTo(auth()->user())
-                        ->with(['schoolClass', 'campus'])
-                        ->get()
-                        ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
-                        ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
-                        ->all())
-                    ->searchable()
-                    ->live()
-                    ->afterStateUpdated(fn () => $this->resetTable()),
+                Grid::make()->schema([
+                    Select::make('section_id')
+                        ->label(__('Section'))
+                        ->placeholder(__('All sections'))
+                        ->options(fn (): array => Section::query()
+                            ->visibleTo(auth()->user())
+                            ->with(['schoolClass', 'campus'])
+                            ->get()
+                            ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
+                            ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
+                            ->all())
+                        ->searchable()
+                        ->live()
+                        ->afterStateUpdated(fn () => $this->resetTable()),
+                ])->extraAttributes(['class' => 'cf-filter-bar']),
             ])
             ->statePath('filters');
     }

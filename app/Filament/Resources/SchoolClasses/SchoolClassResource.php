@@ -10,12 +10,14 @@ use App\Filament\Resources\SchoolClasses\Pages\ViewSchoolClass;
 use App\Filament\Resources\SchoolClasses\RelationManagers\SubjectsRelationManager;
 use App\Models\SchoolClass;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
@@ -59,19 +61,21 @@ class SchoolClassResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->label(__('Name'))
-                    ->placeholder('Class 1')
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
-                TextInput::make('order')
-                    ->label(__('Promotion order'))
-                    ->helperText(__('Students are promoted to the class with the next order.'))
-                    ->integer()
-                    ->minValue(0)
-                    ->required()
-                    ->default(fn (): int => (int) SchoolClass::query()->max('order') + 1),
+                Section::make()->columns(2)->columnSpanFull()->schema([
+                    TextInput::make('name')
+                        ->label(__('Name'))
+                        ->placeholder('Class 1')
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(ignoreRecord: true),
+                    TextInput::make('order')
+                        ->label(__('Promotion order'))
+                        ->helperText(__('Students are promoted to the class with the next order.'))
+                        ->integer()
+                        ->minValue(0)
+                        ->required()
+                        ->default(fn (): int => (int) SchoolClass::query()->max('order') + 1),
+                ]),
             ]);
     }
 
@@ -96,8 +100,10 @@ class SchoolClassResource extends Resource
                     ->counts('sections'),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    EditAction::make(),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

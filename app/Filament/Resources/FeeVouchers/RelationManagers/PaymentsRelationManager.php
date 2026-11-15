@@ -38,7 +38,8 @@ class PaymentsRelationManager extends RelationManager
                     ->date(),
                 TextColumn::make('amount')
                     ->label(__('Amount'))
-                    ->formatStateUsing(fn (int $state): string => FeeService::money($state)),
+                    ->formatStateUsing(fn (int $state): string => FeeService::money($state))
+                    ->alignEnd(),
                 TextColumn::make('method')
                     ->label(__('Payment method'))
                     ->badge(),

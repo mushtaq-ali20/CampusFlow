@@ -6,6 +6,7 @@ use App\Filament\Concerns\AuthorizesWritesWithPermissions;
 use App\Filament\Resources\GradeBands\Pages\ManageGradeBands;
 use App\Models\GradeBand;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -95,8 +96,10 @@ class GradeBandResource extends Resource
                 TextColumn::make('remarks')->label(__('Remarks'))->placeholder('—'),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    DeleteAction::make(),
+                ]),
             ]);
     }
 

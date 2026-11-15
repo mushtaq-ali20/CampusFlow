@@ -10,16 +10,12 @@ use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 
 /**
- * The classes from Pre Nursery to Class 10 as buttons; the chosen class shows its sections with their students
- * drawn as avatars, coloured by the attendance of the last day it was marked.
+ * The classes from Montessori to Class 10 as buttons; the chosen class shows its sections with their students,
+ * each marked with the attendance of the last day it was marked.
  */
 class ClassExplorer extends Widget
 {
     public const STUDENTS_PER_SECTION = 18;
-
-    public const SKIN_TONES = ['#f1c27d', '#e0ac69', '#c68642', '#a96b3c', '#ffdbac'];
-
-    public const HAIR_COLOURS = ['#2d1b0e', '#1f1f1f', '#3b2314', '#5a3825'];
 
     protected static bool $isLazy = false;
 
@@ -47,20 +43,6 @@ class ClassExplorer extends Widget
             $this->classId = $classId;
             session(['dashboard.class_id' => $classId]);
         }
-    }
-
-    /**
-     * The drawing of a student: skin and hair are picked from the admission so that they stay the same.
-     *
-     * @return array{skin: string, hair: string, girl: bool}
-     */
-    public static function avatar(int $seed, ?int $genderId): array
-    {
-        return [
-            'skin' => self::SKIN_TONES[$seed % count(self::SKIN_TONES)],
-            'hair' => self::HAIR_COLOURS[intdiv($seed, 3) % count(self::HAIR_COLOURS)],
-            'girl' => $genderId === 1,
-        ];
     }
 
     /**

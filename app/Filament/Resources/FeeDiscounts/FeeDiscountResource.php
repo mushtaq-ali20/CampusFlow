@@ -8,6 +8,7 @@ use App\Filament\Concerns\AuthorizesWritesWithPermissions;
 use App\Filament\Resources\FeeDiscounts\Pages\ManageFeeDiscounts;
 use App\Models\FeeDiscount;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -111,8 +112,10 @@ class FeeDiscountResource extends Resource
                     ->counts('admissions'),
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()->button()->color('gray'),
+                ActionGroup::make([
+                    DeleteAction::make(),
+                ]),
             ]);
     }
 

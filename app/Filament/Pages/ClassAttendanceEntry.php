@@ -21,6 +21,8 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -92,24 +94,30 @@ class ClassAttendanceEntry extends Page
     {
         return $schema
             ->components([
-                Select::make('section_id')
-                    ->label(__('Section'))
-                    ->options(fn (): array => $this->sections()
-                        ->with(['schoolClass', 'campus'])
-                        ->get()
-                        ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
-                        ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
-                        ->all())
-                    ->searchable()
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn () => $this->loadRows()),
-                DatePicker::make('date')
-                    ->label(__('Date'))
-                    ->maxDate(now())
-                    ->required()
-                    ->live()
-                    ->afterStateUpdated(fn () => $this->loadRows()),
+                Grid::make()->schema([
+                    Select::make('section_id')
+                        ->label(__('Section'))
+                        ->options(fn (): array => $this->sections()
+                            ->with(['schoolClass', 'campus'])
+                            ->get()
+                            ->sortBy(fn (Section $section): string => $section->campus->name.str_pad((string) $section->schoolClass->order, 4, '0', STR_PAD_LEFT).$section->name)
+                            ->mapWithKeys(fn (Section $section): array => [$section->id => $section->campus->name.' - '.$section->full_name])
+                            ->all())
+                        ->searchable()
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn () => $this->loadRows()),
+                    DatePicker::make('date')
+                        ->label(__('Date'))
+                        ->maxDate(now())
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(fn () => $this->loadRows()),
+                ])->extraAttributes(['class' => 'cf-filter-bar'])->columnSpanFull(),
+                View::make('filament.components.pick-first')
+                    ->viewData(['heading' => __('Pick a section'), 'description' => __('The class list opens here with a present, absent or late button for each student.')])
+                    ->columnSpanFull()
+                    ->visible(fn (): bool => blank($this->data['section_id'] ?? null)),
                 Repeater::make('rows')
                     ->label(__('Students'))
                     ->schema([
