@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 650" width="960" height="650" role="img" aria-label="Every browser request enters the Filament admin panel, passes access control and branch scoping, then reaches the domain services, which read and write MySQL through the models and store files on disk. A scheduler runs the same services and sends mail.">
+  <style>
+    text { font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    .bg { fill: #ffffff; }
+    .node { fill: #ffffff; stroke: #5f726a; stroke-width: 1.2; }
+    .node-accent { fill: #d9f2e6; stroke: #047857; stroke-width: 1.6; }
+    .ext { fill: #f5f8f6; stroke: #5f726a; stroke-width: 1.2; }
+    .grp { fill: #ecf2ef; stroke: #c3cfc9; stroke-width: 1.2; stroke-dasharray: 6 4; }
+    .grp-in { fill: #f5f8f6; stroke: #c3cfc9; stroke-width: 1.2; stroke-dasharray: 6 4; }
+    .t { fill: #14211d; font-size: 13.5px; font-weight: 600; }
+    .tm { fill: #14211d; font-size: 12.5px; font-weight: 600; }
+    .s { fill: #55665f; font-size: 11.5px; }
+    .g { fill: #55665f; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .l { fill: #55665f; font-size: 11.5px; }
+    .la { fill: #047857; font-size: 11.5px; font-weight: 600; }
+    .m { fill: #55665f; font-size: 10.5px; font-family: Consolas, "Cascadia Mono", Menlo, monospace; }
+    .e { stroke: #5f726a; stroke-width: 1.4; fill: none; }
+    .ea { stroke: #047857; stroke-width: 1.8; fill: none; }
+    .head { fill: #5f726a; }
+    .head-a { fill: #047857; }
+  </style>
+  <rect class="bg" x="0" y="0" width="960" height="650" rx="10"/>
+  <defs>
+    <marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head"/></marker>
+    <marker id="a1a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head-a"/></marker>
+  </defs>
+
+  <rect class="ext" x="70" y="16" width="530" height="60" rx="8"/>
+  <text class="t" x="88" y="41">Users in the browser</text>
+  <text class="s" x="88" y="60">Administrator · Principal · Accountant · Branch staff · Teachers</text>
+
+  <rect class="grp" x="40" y="110" width="880" height="420" rx="12"/>
+  <text class="g" x="900" y="134" text-anchor="end">CampusFlow container · FrankenPHP</text>
+
+  <path class="e" d="M335 76 V150" marker-end="url(#a1)"/>
+  <text class="l" x="345" y="98">HTTPS</text>
+
+  <rect class="node" x="70" y="150" width="530" height="64" rx="8"/>
+  <text class="t" x="88" y="177">Filament admin panel /admin</text>
+  <text class="s" x="88" y="196">Resources, pages and dashboard widgets, built on Livewire</text>
+
+  <path class="ea" d="M335 214 V246" marker-end="url(#a1a)"/>
+  <text class="l" x="345" y="234">every request</text>
+
+  <rect class="node-accent" x="70" y="246" width="530" height="64" rx="8"/>
+  <text class="t" x="88" y="273">Access control and branch scoping</text>
+  <text class="s" x="88" y="292">One role per user · read-only or full access per module · branch switcher</text>
+
+  <path class="ea" d="M335 310 V342" marker-end="url(#a1a)"/>
+  <text class="la" x="345" y="330">allowed, limited to the active branch</text>
+
+  <rect class="node" x="70" y="342" width="530" height="64" rx="8"/>
+  <text class="t" x="88" y="369">Domain services</text>
+  <text class="s" x="88" y="388">Fees · Results · Attendance · Payroll · Leave · Complaints · Payables</text>
+
+  <path class="e" d="M200 406 V438" marker-end="url(#a1)"/>
+  <text class="l" x="210" y="426">reads and writes</text>
+  <path class="e" d="M475 406 V438" marker-end="url(#a1)"/>
+  <text class="l" x="485" y="426">uploads, PDFs</text>
+
+  <rect class="node" x="70" y="438" width="260" height="64" rx="8"/>
+  <text class="t" x="88" y="465">Eloquent models</text>
+  <text class="s" x="88" y="484">Branch tables filtered by campus_id</text>
+
+  <rect class="node" x="350" y="438" width="250" height="64" rx="8"/>
+  <text class="t" x="368" y="465">Files and documents</text>
+  <text class="s" x="368" y="484">Media library, mPDF</text>
+
+  <rect class="node" x="640" y="342" width="250" height="64" rx="8"/>
+  <text class="t" x="658" y="369">Scheduler</text>
+  <text class="s" x="658" y="388">campusflow:* console commands</text>
+  <path class="e" d="M640 374 H600" marker-end="url(#a1)"/>
+  <text class="l" x="620" y="364" text-anchor="middle">runs</text>
+
+  <path class="e" d="M200 502 V578" marker-end="url(#a1)"/>
+  <text class="l" x="210" y="558">SQL</text>
+  <path class="e" d="M475 502 V578" marker-end="url(#a1)"/>
+  <text class="l" x="485" y="558">writes</text>
+  <path class="e" d="M765 406 V578" marker-end="url(#a1)"/>
+  <text class="l" x="775" y="462">attendance reminders,</text>
+  <text class="l" x="775" y="478">monthly reports</text>
+
+  <rect class="ext" x="70" y="578" width="260" height="56" rx="8"/>
+  <text class="t" x="88" y="602">MySQL 8.4</text>
+  <text class="s" x="88" y="620">SQLite in memory for tests</text>
+
+  <rect class="ext" x="350" y="578" width="250" height="56" rx="8"/>
+  <text class="t" x="368" y="602">storage/</text>
+  <text class="s" x="368" y="620">Uploaded and generated files</text>
+
+  <rect class="ext" x="640" y="578" width="250" height="56" rx="8"/>
+  <text class="t" x="658" y="602">Mail provider</text>
+  <text class="s" x="658" y="620">Outgoing email</text>
+</svg>

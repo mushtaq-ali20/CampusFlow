@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 570" width="1120" height="570" role="img" aria-label="An approved enquiry becomes an admission, which places a student in a section. The student record then feeds attendance, exams and results, and fees. Teachers and employees teach the sections and feed leave and payroll. Roles, the branch switcher, the activity log and settings apply to every module.">
+  <style>
+    text { font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    .bg { fill: #ffffff; }
+    .node { fill: #ffffff; stroke: #5f726a; stroke-width: 1.2; }
+    .node-accent { fill: #d9f2e6; stroke: #047857; stroke-width: 1.6; }
+    .ext { fill: #f5f8f6; stroke: #5f726a; stroke-width: 1.2; }
+    .grp { fill: #ecf2ef; stroke: #c3cfc9; stroke-width: 1.2; stroke-dasharray: 6 4; }
+    .grp-in { fill: #f5f8f6; stroke: #c3cfc9; stroke-width: 1.2; stroke-dasharray: 6 4; }
+    .t { fill: #14211d; font-size: 13.5px; font-weight: 600; }
+    .tm { fill: #14211d; font-size: 12.5px; font-weight: 600; }
+    .s { fill: #55665f; font-size: 11.5px; }
+    .g { fill: #55665f; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .l { fill: #55665f; font-size: 11.5px; }
+    .la { fill: #047857; font-size: 11.5px; font-weight: 600; }
+    .m { fill: #55665f; font-size: 10.5px; font-family: Consolas, "Cascadia Mono", Menlo, monospace; }
+    .e { stroke: #5f726a; stroke-width: 1.4; fill: none; }
+    .ea { stroke: #047857; stroke-width: 1.8; fill: none; }
+    .head { fill: #5f726a; }
+    .head-a { fill: #047857; }
+  </style>
+  <rect class="bg" x="0" y="0" width="1120" height="570" rx="10"/>
+  <defs>
+    <marker id="a0" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head"/></marker>
+    <marker id="a0a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head-a"/></marker>
+  </defs>
+
+  <text class="g" x="40" y="44">Student journey</text>
+
+  <rect class="node" x="40" y="60" width="200" height="64" rx="8"/>
+  <text class="t" x="56" y="87">Admission enquiry</text>
+  <text class="s" x="56" y="106">Front desk follow-up</text>
+  <path class="ea" d="M240 92 H310" marker-end="url(#a0a)"/>
+  <text class="la" x="275" y="83" text-anchor="middle">approved</text>
+
+  <rect class="node" x="310" y="60" width="200" height="64" rx="8"/>
+  <text class="t" x="326" y="87">Admission</text>
+  <text class="s" x="326" y="106">Branch, class, section, year</text>
+  <path class="ea" d="M510 92 H580" marker-end="url(#a0a)"/>
+  <text class="la" x="545" y="83" text-anchor="middle">places</text>
+
+  <rect class="node-accent" x="580" y="60" width="200" height="64" rx="8"/>
+  <text class="t" x="596" y="87">Student</text>
+  <text class="s" x="596" y="106">Profile, documents, discipline</text>
+  <path class="e" d="M780 92 H850" marker-end="url(#a0)"/>
+  <text class="l" x="815" y="83" text-anchor="middle">family</text>
+
+  <rect class="node" x="850" y="60" width="230" height="64" rx="8"/>
+  <text class="t" x="866" y="87">Guardians</text>
+  <text class="s" x="866" y="106">Messages · meetings · complaints</text>
+
+  <path class="e" d="M140 210 V150 H370 V124" marker-end="url(#a0)"/>
+  <text class="l" x="150" y="142">sections for the year</text>
+
+  <path class="ea" d="M680 124 V167 H450 V210" marker-end="url(#a0a)"/>
+  <path class="ea" d="M680 124 V210" marker-end="url(#a0a)"/>
+  <path class="ea" d="M680 124 V167 H965 V210" marker-end="url(#a0a)"/>
+  <text class="l" x="460" y="196">daily register</text>
+  <text class="l" x="690" y="196">marks per subject</text>
+  <text class="l" x="975" y="196">monthly voucher</text>
+
+  <rect class="node" x="40" y="210" width="200" height="64" rx="8"/>
+  <text class="t" x="56" y="237">School structure</text>
+  <text class="s" x="56" y="256">Shift → Class → Section · subjects</text>
+
+  <rect class="node" x="310" y="210" width="200" height="64" rx="8"/>
+  <text class="t" x="326" y="237">Attendance</text>
+  <text class="s" x="326" y="256">Class register and reports</text>
+
+  <rect class="node" x="580" y="210" width="200" height="64" rx="8"/>
+  <text class="t" x="596" y="237">Exams and results</text>
+  <text class="s" x="596" y="256">Marks, grading scale, result cards</text>
+
+  <rect class="node" x="850" y="210" width="230" height="64" rx="8"/>
+  <text class="t" x="866" y="237">Fees</text>
+  <text class="s" x="866" y="256">Vouchers, counter payments, ledger</text>
+
+  <text class="g" x="310" y="334">Staff and accounts</text>
+
+  <path class="e" d="M140 350 V274" marker-end="url(#a0)"/>
+  <text class="l" x="150" y="316">teach subjects in sections</text>
+
+  <rect class="node" x="40" y="350" width="200" height="64" rx="8"/>
+  <text class="t" x="56" y="377">Teachers and employees</text>
+  <text class="s" x="56" y="396">Profiles, appraisals, recruitment</text>
+  <path class="e" d="M240 382 H310" marker-end="url(#a0)"/>
+  <text class="l" x="275" y="373" text-anchor="middle">apply</text>
+
+  <rect class="node" x="310" y="350" width="200" height="64" rx="8"/>
+  <text class="t" x="326" y="377">Leave requests</text>
+  <text class="s" x="326" y="396">Allowances and approval</text>
+
+  <path class="e" d="M140 414 V440 H680 V414" marker-end="url(#a0)"/>
+  <text class="l" x="410" y="433" text-anchor="middle">salaries</text>
+
+  <rect class="node" x="580" y="350" width="200" height="64" rx="8"/>
+  <text class="t" x="596" y="377">Payroll</text>
+  <text class="s" x="596" y="396">Payroll runs, salary slips</text>
+
+  <rect class="node" x="850" y="350" width="230" height="64" rx="8"/>
+  <text class="t" x="866" y="377">Account payable</text>
+  <text class="s" x="866" y="396">Vendors, bills, payments</text>
+
+  <rect class="grp" x="40" y="466" width="1040" height="84" rx="12"/>
+  <text class="g" x="56" y="490">Applies to every module</text>
+  <rect class="node" x="56" y="504" width="240" height="32" rx="6"/>
+  <text class="t" x="176" y="525" text-anchor="middle">Roles and module access</text>
+  <rect class="node" x="312" y="504" width="240" height="32" rx="6"/>
+  <text class="t" x="432" y="525" text-anchor="middle">Branch switcher</text>
+  <rect class="node" x="568" y="504" width="240" height="32" rx="6"/>
+  <text class="t" x="688" y="525" text-anchor="middle">Activity log</text>
+  <rect class="node" x="824" y="504" width="240" height="32" rx="6"/>
+  <text class="t" x="944" y="525" text-anchor="middle">Settings</text>
+</svg>
