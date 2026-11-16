@@ -2,6 +2,103 @@
 
 CampusFlow is a Laravel and Filament school management system for Pakistani schools. It covers admissions and enquiries, students, classes and sections, the timetable, attendance, exams and result cards, fees collected at the counter, complaints, parent teacher meetings, documents, discipline, employees, leave, payroll, recruitment, performance evaluation and account payable. Several branches are run from one installation.
 
+# Screenshots
+
+The screens below show the demo data created by `SchoolDemoSeeder`.
+
+**Dashboard**: attendance, fee collection and overdue fees for the branch chosen in the top bar.
+
+![Dashboard](.github/screenshots/dashboard.jpg)
+
+**Timetable manager**: the weekly timetable of a section, with the periods of its own shift.
+
+![Timetable manager](.github/screenshots/timetable.jpg)
+
+**Fee vouchers**: monthly vouchers with their balance, and payment collected at the counter.
+
+![Fee vouchers](.github/screenshots/fee-vouchers.jpg)
+
+# Architecture
+
+CampusFlow is one Laravel 13 application. Its whole interface is a single [Filament 5](https://filamentphp.com) admin panel at `/admin`, served by FrankenPHP.
+
+```mermaid
+flowchart TB
+    users["Administrator, principal, accountant,<br/>branch staff and teachers (browser)"]
+
+    subgraph container["CampusFlow container: FrankenPHP (Caddy + PHP 8.5)"]
+        direction TB
+        panel["Filament admin panel /admin<br/>Resources, Pages and Widgets (Livewire)"]
+        access["Access control<br/>one role per user, modules with read-only or full access,<br/>branch switcher"]
+        services["Domain services (app/Services)<br/>fees, results, attendance reports, payroll, leave,<br/>complaints, recruitment, payables"]
+        models["Eloquent models<br/>branch-owned tables are filtered by campus_id"]
+        console["Scheduler and campusflow:* console commands"]
+
+        panel --> access --> services --> models
+        console --> services
+    end
+
+    db[("MySQL 8.4")]
+    files[("storage/<br/>uploaded files, generated PDFs")]
+    mail["Mail provider"]
+    sentry["Sentry (optional)"]
+
+    users -->|HTTPS| panel
+    models --> db
+    services --> files
+    services --> mail
+    container -.->|errors| sentry
+```
+
+| Layer | Where | What it does |
+|---|---|---|
+| Interface | `app/Filament` | Resources (lists and forms), Pages (dashboard, timetable manager, marks entry, ledgers) and Widgets. The panel is defined in `app/Providers/Filament/AdminPanelProvider.php`. |
+| Access control | `app/Services/AccessModules.php`, `spatie/laravel-permission` | Each user has one role. A role gets "read only" or "full access" per module, plus separate approval rights. The Administrator role has every permission. |
+| Branches | `app/Livewire/BranchSwitcher.php`, `app/Models/Concerns/BelongsToBranch.php` | A campus is a branch. The switcher in the top bar filters every screen; branch staff are locked to their own branch. |
+| Business logic | `app/Services` | One service per domain, such as `FeeService`, `ResultService`, `PayrollService` and `LeaveRequestService`. |
+| Data | `app/Models`, `database/migrations` | The hierarchy is Shift → Class → Section. A student gets an admission, which places them in a branch, class and section for a year. |
+| Tenancy | `spatie/laravel-multitenancy` | One institution by default; several institutions, each with its own database, are optional (see [Serving several institutions](#serving-several-institutions)). |
+| Tests | `tests/` | PHPUnit on an in-memory SQLite database. |
+
+# Infrastructure
+
+The same `Dockerfile` builds the development image used by `docker-compose.yml` and the production image. Production runs on Azure Container Apps and is described in [`infra/main.bicep`](infra/main.bicep).
+
+```mermaid
+flowchart LR
+    feature["feature/* branch"] -->|pull request| develop["develop"]
+    develop -->|release pull request| main["main"]
+    main -->|push| actions["GitHub Actions<br/>deploy.yml"]
+
+    subgraph azure["Azure resource group campusflow-rg (Central India)"]
+        direction TB
+        identity["Managed identity<br/>campusflow-github-oidc"]
+        registry["Container Registry<br/>campusflowacr"]
+        subgraph environment["Container Apps environment campusflow-env"]
+            app["Container App campusflow<br/>port 8080, 0 to 1 replica"]
+            seed["Job campusflow-seed<br/>manual, loads the demo data"]
+        end
+        mysql[("MySQL Flexible Server<br/>campusflow-db")]
+        logs["Log Analytics<br/>campusflow-logs"]
+
+        registry --> app
+        registry --> seed
+        app --> mysql
+        seed --> mysql
+        environment --> logs
+    end
+
+    actions -->|OIDC login, no stored password| identity
+    actions -->|build and push the image| registry
+    actions -->|deploy a new revision| app
+    visitors["Browser"] -->|HTTPS ingress| app
+```
+
+- **Deploy**: merging the release pull request into `main` starts `.github/workflows/deploy.yml`. It logs in to Azure with OIDC, builds the production image, pushes it to the registry and deploys it to the Container App. Changes under `infra/` alone do not redeploy the app.
+- **Start-up**: the container migrates the database and caches the configuration each time it starts (`docker/prod-entrypoint.sh`).
+- **Scaling**: the app scales to zero when nobody uses it, so the first request after a pause is slow.
+- **Ports**: the production image serves plain HTTP on port 8080; the Container Apps ingress handles HTTPS.
+
 # Disclaimer
 This software is provided "as-is", without any warranties. Please use with caution, and report bugs if you encounter them.
 
