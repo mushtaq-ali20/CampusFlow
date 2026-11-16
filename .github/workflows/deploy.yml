@@ -1,15 +1,18 @@
-name: Deploy campusflow-demo
+name: Deploy campusflow
 
-# Builds the production image and deploys it to the campusflow-demo Azure Container App.
+# Builds the production image and deploys it to the campusflow Azure Container App.
 # Merging the release pull request (develop → main) is a push to main, which starts this workflow.
 on:
   push:
     branches: [main]
+    # Infrastructure-only changes (Bicep, restore guide) must not rebuild and redeploy the app
+    paths-ignore:
+      - 'infra/**'
   workflow_dispatch:
 
 # Deploy one release at a time, in order
 concurrency:
-  group: deploy-campusflow-demo
+  group: deploy-campusflow
   cancel-in-progress: false
 
 jobs:
@@ -26,18 +29,18 @@ jobs:
       - name: Azure Login
         uses: azure/login@v3
         with:
-          client-id: ${{ secrets.CAMPUSFLOWDEMO_AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.CAMPUSFLOWDEMO_AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.CAMPUSFLOWDEMO_AZURE_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.CAMPUSFLOW_AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.CAMPUSFLOW_AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.CAMPUSFLOW_AZURE_SUBSCRIPTION_ID }}
 
       - name: Build, push and deploy
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
           dockerfilePath: Dockerfile
-          registryUrl: cfdemoacr31512141.azurecr.io
-          registryUsername: ${{ secrets.CAMPUSFLOWDEMO_REGISTRY_USERNAME }}
-          registryPassword: ${{ secrets.CAMPUSFLOWDEMO_REGISTRY_PASSWORD }}
-          containerAppName: campusflow-demo
-          resourceGroup: campusflow-demo-rg
-          imageToBuild: cfdemoacr31512141.azurecr.io/campusflow-demo:${{ github.sha }}
+          registryUrl: campusflowacr.azurecr.io
+          registryUsername: ${{ secrets.CAMPUSFLOW_REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.CAMPUSFLOW_REGISTRY_PASSWORD }}
+          containerAppName: campusflow
+          resourceGroup: campusflow-rg
+          imageToBuild: campusflowacr.azurecr.io/campusflow:${{ github.sha }}
