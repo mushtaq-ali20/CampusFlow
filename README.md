@@ -22,33 +22,21 @@ The screens below show the demo data created by `SchoolDemoSeeder`.
 
 CampusFlow is one Laravel 13 application. Its whole interface is a single [Filament 5](https://filamentphp.com) admin panel at `/admin`, served by FrankenPHP.
 
-```mermaid
-flowchart TB
-    users["Administrator, principal, accountant,<br/>branch staff and teachers (browser)"]
+**System design**: how the modules connect. The green path is a student's way through the system.
 
-    subgraph container["CampusFlow container: FrankenPHP (Caddy + PHP 8.5)"]
-        direction TB
-        panel["Filament admin panel /admin<br/>Resources, Pages and Widgets (Livewire)"]
-        access["Access control<br/>one role per user, modules with read-only or full access,<br/>branch switcher"]
-        services["Domain services (app/Services)<br/>fees, results, attendance reports, payroll, leave,<br/>complaints, recruitment, payables"]
-        models["Eloquent models<br/>branch-owned tables are filtered by campus_id"]
-        console["Scheduler and campusflow:* console commands"]
+![System design](.github/diagrams/system-design.svg)
 
-        panel --> access --> services --> models
-        console --> services
-    end
+**Services, components and technologies**: one page load from top to bottom, with the services and the libraries they use.
 
-    db[("MySQL 8.4")]
-    files[("storage/<br/>uploaded files, generated PDFs")]
-    mail["Mail provider"]
-    sentry["Sentry (optional)"]
+![Services, components and technologies](.github/diagrams/services-and-technologies.svg)
 
-    users -->|HTTPS| panel
-    models --> db
-    services --> files
-    services --> mail
-    container -.->|errors| sentry
-```
+- MySQL holds the sessions, the cache and the queue as well as the school data, so no Redis is needed.
+- WhatsApp is not an API integration: CampusFlow opens a chat with the message written, and keeps a copy of it.
+- Services inherited from the language-school fork are left out of the diagram.
+
+**Application layers**: every request passes access control and branch scoping before it reaches the business logic.
+
+![Application layers](.github/diagrams/application-layers.svg)
 
 | Layer | Where | What it does |
 |---|---|---|
@@ -64,35 +52,7 @@ flowchart TB
 
 The same `Dockerfile` builds the development image used by `docker-compose.yml` and the production image. Production runs on Azure Container Apps and is described in [`infra/main.bicep`](infra/main.bicep).
 
-```mermaid
-flowchart LR
-    feature["feature/* branch"] -->|pull request| develop["develop"]
-    develop -->|release pull request| main["main"]
-    main -->|push| actions["GitHub Actions<br/>deploy.yml"]
-
-    subgraph azure["Azure resource group campusflow-rg (Central India)"]
-        direction TB
-        identity["Managed identity<br/>campusflow-github-oidc"]
-        registry["Container Registry<br/>campusflowacr"]
-        subgraph environment["Container Apps environment campusflow-env"]
-            app["Container App campusflow<br/>port 8080, 0 to 1 replica"]
-            seed["Job campusflow-seed<br/>manual, loads the demo data"]
-        end
-        mysql[("MySQL Flexible Server<br/>campusflow-db")]
-        logs["Log Analytics<br/>campusflow-logs"]
-
-        registry --> app
-        registry --> seed
-        app --> mysql
-        seed --> mysql
-        environment --> logs
-    end
-
-    actions -->|OIDC login, no stored password| identity
-    actions -->|build and push the image| registry
-    actions -->|deploy a new revision| app
-    visitors["Browser"] -->|HTTPS ingress| app
-```
+![Delivery and Azure infrastructure](.github/diagrams/azure-delivery.svg)
 
 - **Deploy**: merging the release pull request into `main` starts `.github/workflows/deploy.yml`. It logs in to Azure with OIDC, builds the production image, pushes it to the registry and deploys it to the Container App. Changes under `infra/` alone do not redeploy the app.
 - **Start-up**: the container migrates the database and caches the configuration each time it starts (`docker/prod-entrypoint.sh`).

@@ -1,0 +1,179 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 940" width="1200" height="940" role="img" aria-label="A request travels from the browser through FrankenPHP and the Laravel middleware into the Filament panel, whose resources, pages and widgets call the domain services. The services use Eloquent, the permission, activity log and media libraries, mPDF, Laravel Mail and WhatsApp links, which end in MySQL, the storage folder, the mail provider and WhatsApp.">
+  <style>
+    text { font-family: "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif; }
+    .bg { fill: #ffffff; }
+    .node { fill: #ffffff; stroke: #5f726a; stroke-width: 1.2; }
+    .node-accent { fill: #d9f2e6; stroke: #047857; stroke-width: 1.6; }
+    .ext { fill: #f5f8f6; stroke: #5f726a; stroke-width: 1.2; }
+    .grp { fill: #ecf2ef; stroke: #c3cfc9; stroke-width: 1.2; stroke-dasharray: 6 4; }
+    .grp-in { fill: #f5f8f6; stroke: #c3cfc9; stroke-width: 1.2; stroke-dasharray: 6 4; }
+    .t { fill: #14211d; font-size: 13.5px; font-weight: 600; }
+    .tm { fill: #14211d; font-size: 12.5px; font-weight: 600; }
+    .s { fill: #55665f; font-size: 11.5px; }
+    .g { fill: #55665f; font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .l { fill: #55665f; font-size: 11.5px; }
+    .la { fill: #047857; font-size: 11.5px; font-weight: 600; }
+    .m { fill: #55665f; font-size: 10.5px; font-family: Consolas, "Cascadia Mono", Menlo, monospace; }
+    .e { stroke: #5f726a; stroke-width: 1.4; fill: none; }
+    .ea { stroke: #047857; stroke-width: 1.8; fill: none; }
+    .head { fill: #5f726a; }
+    .head-a { fill: #047857; }
+  </style>
+  <rect class="bg" x="0" y="0" width="1200" height="940" rx="10"/>
+  <defs>
+    <marker id="a3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head"/></marker>
+    <marker id="a3a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="head-a"/></marker>
+  </defs>
+
+            <rect class="ext" x="45" y="20" width="736" height="56" rx="8"/>
+  <text class="t" x="61" y="44">Browser</text>
+  <text class="s" x="61" y="62">Livewire and Alpine.js update the page without reloads · Tailwind CSS 4, bundled by Vite</text>
+  <path class="ea" d="M413 76 V120" marker-end="url(#a3a)"/>
+  <text class="l" x="423" y="103">HTTPS</text>
+
+            <rect class="node" x="45" y="120" width="736" height="56" rx="8"/>
+  <text class="t" x="61" y="144">FrankenPHP (Caddy + PHP 8.5)</text>
+  <text class="s" x="61" y="162">Serves the built assets from public/build with gzip, hands every other request to Laravel</text>
+  <path class="ea" d="M413 176 V220" marker-end="url(#a3a)"/>
+  <text class="l" x="423" y="203">index.php</text>
+
+            <rect class="node" x="45" y="220" width="736" height="56" rx="8"/>
+  <text class="t" x="61" y="244">Laravel 13 middleware</text>
+  <text class="s" x="61" y="262">Finds the tenant by domain (spatie/laravel-multitenancy) · login · language · forced password change</text>
+  <path class="e" d="M781 248 H850" stroke-dasharray="5 4" marker-end="url(#a3)"/>
+  <text class="l" x="815" y="239" text-anchor="middle">errors</text>
+  <rect class="ext" x="850" y="220" width="305" height="56" rx="8"/>
+  <text class="t" x="866" y="244">Sentry</text>
+  <text class="s" x="866" y="262">Error reports, tagged with the tenant</text>
+  <path class="ea" d="M413 276 V320" marker-end="url(#a3a)"/>
+  <text class="l" x="423" y="303">signed-in user</text>
+
+            <rect class="grp" x="33" y="320" width="760" height="110" rx="12"/>
+  <text class="g" x="49" y="341">Filament 5 admin panel · app/Filament</text>
+  <rect class="node" x="45" y="352" width="175" height="64" rx="8"/>
+  <text class="t" x="57" y="379">Resources</text>
+  <text class="s" x="57" y="398">Lists, forms, row actions</text>
+  <rect class="node" x="232" y="352" width="175" height="64" rx="8"/>
+  <text class="t" x="244" y="379">Pages</text>
+  <text class="s" x="244" y="398">Dashboard, timetable, marks</text>
+  <rect class="node" x="419" y="352" width="175" height="64" rx="8"/>
+  <text class="t" x="431" y="379">Widgets</text>
+  <text class="s" x="431" y="398">KPIs, fee stats, timetable</text>
+  <rect class="node" x="606" y="352" width="175" height="64" rx="8"/>
+  <text class="t" x="618" y="379">BranchSwitcher</text>
+  <text class="s" x="618" y="398">Livewire · branch in session</text>
+
+  <rect class="node" x="805" y="352" width="350" height="64" rx="8"/>
+  <text class="t" x="821" y="379">Scheduler and queue worker</text>
+  <text class="s" x="821" y="398">artisan schedule:run · queue:work</text>
+
+  <path class="ea" d="M413 430 V480" marker-end="url(#a3a)"/>
+  <text class="l" x="423" y="460">call services</text>
+  <path class="e" d="M980 416 V480" marker-end="url(#a3)"/>
+  <text class="l" x="990" y="453">campusflow:* commands</text>
+
+            <rect class="grp" x="33" y="480" width="1134" height="200" rx="12"/>
+  <text class="g" x="49" y="501">Domain services · app/Services</text>
+
+  <rect class="node" x="45" y="512" width="175" height="154" rx="8"/>
+  <text class="t" x="57" y="535">Platform</text>
+  <text class="m" x="57" y="558">AccessModules</text>
+  <text class="m" x="57" y="576">UserAccessService</text>
+  <text class="m" x="57" y="594">ActiveBranch</text>
+  <text class="m" x="57" y="612">Settings</text>
+  <text class="m" x="57" y="630">SchoolOverviewService</text>
+  <text class="m" x="57" y="648">DashboardLayout</text>
+
+  <rect class="node" x="232" y="512" width="175" height="154" rx="8"/>
+  <text class="t" x="244" y="535">Admissions, students</text>
+  <text class="m" x="244" y="558">AdmissionEnquiryService</text>
+  <text class="m" x="244" y="576">PromotionService</text>
+  <text class="m" x="244" y="594">StudentOverviewService</text>
+
+  <rect class="node" x="419" y="512" width="175" height="154" rx="8"/>
+  <text class="t" x="431" y="535">Academics</text>
+  <text class="m" x="431" y="558">GradingService</text>
+  <text class="m" x="431" y="576">ResultService</text>
+  <text class="m" x="431" y="594">AttendanceReportService</text>
+  <text class="m" x="431" y="612">CertificateService</text>
+
+  <rect class="node" x="606" y="512" width="175" height="154" rx="8"/>
+  <text class="t" x="618" y="535">Fees</text>
+  <text class="m" x="618" y="558">FeeService</text>
+  <text class="m" x="618" y="576">FeeAccountService</text>
+  <text class="m" x="618" y="594">FeeLedgerService</text>
+  <text class="m" x="618" y="612">FeeReportService</text>
+  <text class="m" x="618" y="630">ReceiptService</text>
+
+  <rect class="node" x="793" y="512" width="175" height="154" rx="8"/>
+  <text class="t" x="805" y="535">Staff and HR</text>
+  <text class="m" x="805" y="558">LeaveRequestService</text>
+  <text class="m" x="805" y="576">PayrollService</text>
+  <text class="m" x="805" y="594">AppraisalService</text>
+  <text class="m" x="805" y="612">RecruitmentService</text>
+
+  <rect class="node" x="980" y="512" width="175" height="154" rx="8"/>
+  <text class="t" x="992" y="535">Front desk, accounts</text>
+  <text class="m" x="992" y="558">ComplaintService</text>
+  <text class="m" x="992" y="576">PtmService</text>
+  <text class="m" x="992" y="594">WhatsAppService</text>
+  <text class="m" x="992" y="612">PayableService</text>
+
+            <path class="ea" d="M132 680 V740" marker-end="url(#a3a)"/>
+  <text class="la" x="142" y="715">all services</text>
+  <path class="e" d="M319 680 V740" marker-end="url(#a3)"/>
+  <text class="l" x="329" y="715">access checks</text>
+  <path class="e" d="M506 680 V740" marker-end="url(#a3)"/>
+  <text class="l" x="516" y="715">audit trail</text>
+  <path class="e" d="M693 680 V740" marker-end="url(#a3)"/>
+  <text class="l" x="703" y="715">uploads, PDFs</text>
+  <path class="e" d="M880 680 V740" marker-end="url(#a3)"/>
+  <text class="l" x="890" y="715">notifications</text>
+  <path class="e" d="M1067 680 V740" marker-end="url(#a3)"/>
+  <text class="l" x="1077" y="715">to parents</text>
+
+            <rect class="node-accent" x="45" y="740" width="175" height="64" rx="8"/>
+  <text class="tm" x="57" y="767">Eloquent ORM</text>
+  <text class="s" x="57" y="786">Models, BelongsToBranch</text>
+  <rect class="node" x="232" y="740" width="175" height="64" rx="8"/>
+  <text class="tm" x="244" y="767">laravel-permission</text>
+  <text class="s" x="244" y="786">spatie · roles and rights</text>
+  <rect class="node" x="419" y="740" width="175" height="64" rx="8"/>
+  <text class="tm" x="431" y="767">laravel-activitylog</text>
+  <text class="s" x="431" y="786">spatie · who changed what</text>
+  <rect class="node" x="606" y="740" width="175" height="64" rx="8"/>
+  <text class="tm" x="618" y="767">medialibrary + mPDF</text>
+  <text class="s" x="618" y="786">Uploads · PDF documents</text>
+  <rect class="node" x="793" y="740" width="175" height="64" rx="8"/>
+  <text class="tm" x="805" y="767">Laravel Mail + queue</text>
+  <text class="s" x="805" y="786">Emails sent in background</text>
+  <rect class="node" x="980" y="740" width="175" height="64" rx="8"/>
+  <text class="tm" x="992" y="767">wa.me link</text>
+  <text class="s" x="992" y="786">Message text pre-filled</text>
+
+            <path class="ea" d="M132 804 V860" marker-end="url(#a3a)"/>
+  <text class="la" x="142" y="837">SQL</text>
+  <path class="e" d="M319 804 V860" marker-end="url(#a3)"/>
+  <text class="l" x="329" y="837">role tables</text>
+  <path class="e" d="M506 804 V860" marker-end="url(#a3)"/>
+  <text class="l" x="516" y="837">log table</text>
+  <path class="e" d="M693 804 V860" marker-end="url(#a3)"/>
+  <text class="l" x="703" y="837">writes files</text>
+  <path class="e" d="M880 804 V860" marker-end="url(#a3)"/>
+  <text class="l" x="890" y="837">SMTP or API</text>
+  <path class="e" d="M1067 804 V860" marker-end="url(#a3)"/>
+  <text class="l" x="1077" y="837">opens chat</text>
+
+            <rect class="ext" x="45" y="860" width="549" height="60" rx="8"/>
+  <text class="t" x="61" y="885">MySQL 8.4</text>
+  <text class="s" x="61" y="904">School data · sessions · cache · queued jobs, all on the database drivers</text>
+  <rect class="ext" x="606" y="860" width="175" height="60" rx="8"/>
+  <text class="t" x="618" y="885">storage/</text>
+  <text class="s" x="618" y="904">Local disk, per tenant</text>
+  <rect class="ext" x="793" y="860" width="175" height="60" rx="8"/>
+  <text class="t" x="805" y="885">Mail provider</text>
+  <text class="s" x="805" y="904">Mailgun or SMTP</text>
+  <rect class="ext" x="980" y="860" width="175" height="60" rx="8"/>
+  <text class="t" x="992" y="885">WhatsApp</text>
+  <text class="s" x="992" y="904">School's own account</text>
+</svg>
