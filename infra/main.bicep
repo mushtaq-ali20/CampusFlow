@@ -46,7 +46,7 @@ resource logs 'Microsoft.OperationalInsights/workspaces@2023-09-01' = {
   location: location
   properties: {
     sku: { name: 'PerGB2018' }
-    retentionInDays: 7
+    retentionInDays: 30
     workspaceCapping: { dailyQuotaGb: json('0.1') }
   }
 }
@@ -92,6 +92,16 @@ resource allowAzure 'Microsoft.DBforMySQL/flexibleServers/firewallRules@2023-12-
   }
 }
 
+// Azure turns this on by default; the legacy migrations add their own auto-increment id and then fail.
+resource noInvisibleKeys 'Microsoft.DBforMySQL/flexibleServers/configurations@2023-12-30' = {
+  parent: mysql
+  name: 'sql_generate_invisible_primary_key'
+  properties: {
+    value: 'OFF'
+    source: 'user-override'
+  }
+}
+
 resource database 'Microsoft.DBforMySQL/flexibleServers/databases@2023-12-30' = {
   parent: mysql
   name: 'campusflow'
@@ -99,6 +109,7 @@ resource database 'Microsoft.DBforMySQL/flexibleServers/databases@2023-12-30' = 
     charset: 'utf8mb4'
     collation: 'utf8mb4_unicode_ci'
   }
+  dependsOn: [ noInvisibleKeys ]
 }
 
 resource env 'Microsoft.App/managedEnvironments@2024-03-01' = {
