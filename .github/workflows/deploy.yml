@@ -5,6 +5,9 @@ name: Deploy campusflow-demo
 on:
   push:
     branches: [main]
+    # Infrastructure-only changes (Bicep, restore guide) must not rebuild and redeploy the app
+    paths-ignore:
+      - 'infra/**'
   workflow_dispatch:
 
 # Deploy one release at a time, in order
