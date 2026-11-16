@@ -264,7 +264,3 @@ GRANT ALL PRIVILEGES ON `campusflow\_%`.* TO 'campusflow'@'%';
 See [CONTRIBUTING.md](CONTRIBUTING.md) for how to set up a development environment and submit changes.
 
 To report a security problem, follow the [security policy](SECURITY.md) instead of opening a public issue.
-
-# License
-
-CampusFlow is open-source software licensed under the [MIT License](LICENSE).
